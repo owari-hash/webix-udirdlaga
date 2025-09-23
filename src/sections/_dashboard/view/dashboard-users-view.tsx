@@ -14,7 +14,6 @@ import { alpha, useTheme } from '@mui/material/styles';
 
 import Iconify from 'src/components/iconify';
 
-
 // ----------------------------------------------------------------------
 
 const MOCK_USERS = [
@@ -136,7 +135,6 @@ export default function DashboardUsersView() {
 
   return (
     <Container maxWidth="xl">
-
       {/* User Stats */}
       <Box
         sx={{
@@ -157,11 +155,8 @@ export default function DashboardUsersView() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  bgcolor: alpha(
-                    theme.palette[stat.color as keyof typeof theme.palette].main,
-                    0.08
-                  ),
-                  color: theme.palette[stat.color as keyof typeof theme.palette].main,
+                  bgcolor: alpha((theme.palette as any)[stat.color].main, 0.08),
+                  color: (theme.palette as any)[stat.color].main,
                 }}
               >
                 <Iconify icon={stat.icon} width={32} />

@@ -152,11 +152,8 @@ export default function DashboardAnalyticsView() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  bgcolor: alpha(
-                    theme.palette[metric.color as keyof typeof theme.palette].main,
-                    0.08
-                  ),
-                  color: theme.palette[metric.color as keyof typeof theme.palette].main,
+                  bgcolor: alpha((theme.palette as any)[metric.color].main, 0.08),
+                  color: (theme.palette as any)[metric.color].main,
                   mb: 2,
                 }}
               >

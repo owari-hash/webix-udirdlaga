@@ -14,19 +14,19 @@ import { fShortenNumber } from 'src/utils/format-number';
 
 const ROWS = [
   {
-    label: 'projects',
+    label: 'төсөл',
     total: 20,
-    content: 'Praesent turpis. Praesent blandit laoreet nibh. Nunc nonummy metus.',
+    content: 'Амжилттай хэрэгжүүлсэн төслүүд. Үйлчлүүлэгчдийн хэрэгцээг хангасан шийдлүүд.',
   },
   {
-    label: 'Happy clients',
+    label: 'сэтгэл хангалуун үйлчлүүлэгч',
     total: 32000,
-    content: 'Praesent turpis. Praesent blandit laoreet nibh. Nunc nonummy metus.',
+    content: 'Манай үйлчилгээнд сэтгэл хангалуун үйлчлүүлэгчид. Найдвартай түншлэл.',
   },
   {
-    label: 'years of experience',
+    label: 'жилийн туршлага',
     total: 20,
-    content: 'Praesent turpis. Praesent blandit laoreet nibh. Nunc nonummy metus.',
+    content: 'Олон жилийн туршлага бүхий мэргэжилтнүүд. Чанартай үйлчилгээ.',
   },
 ];
 
@@ -63,18 +63,17 @@ export default function DashboardLandingAbout() {
           }}
         >
           <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
-            About Us
+            Бидний тухай
           </Typography>
 
           <Typography variant="h2" sx={{ my: 3 }}>
-            Who We Are
+            Бид хэн бэ
           </Typography>
 
           <Typography sx={{ color: 'text.secondary' }}>
-            In hac habitasse platea dictumst. Aliquam lobortis. Lorem ipsum dolor sit amet,
-            consectetuer adipiscing elit. In dui magna, posuere eget, vestibulum et, tempor auctor,
-            justo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac
-            turpis egestas.
+            Бид дижитал шийдлүүд бүтээх чадварлаг баг юм. Үйлчлүүлэгчдийнхээ амжилтанд хувь нэмэр
+            оруулахыг зорьдог. Инновацийн технологи ашиглан бизнесийн өсөлтөд дэмжлэг үзүүлдэг.
+            Манай зорилго бол найдвартай түншлэл бий болгох явдал юм.
           </Typography>
 
           <Button
@@ -83,7 +82,7 @@ export default function DashboardLandingAbout() {
             endIcon={<Iconify icon="carbon:chevron-right" />}
             sx={{ my: 5 }}
           >
-            Lean more
+            Дэлгэрэнгүй
           </Button>
         </Grid>
 

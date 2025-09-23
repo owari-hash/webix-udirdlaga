@@ -20,10 +20,6 @@ import Searchbar from '../common/searchbar';
 import HeaderShadow from '../common/header-shadow';
 import SettingsButton from '../common/settings-button';
 
-import NavMobile from './nav/mobile';
-import NavDesktop from './nav/desktop';
-import { navConfig } from './config-navigation';
-
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -88,8 +84,6 @@ export default function Header({ headerOnDark }: Props) {
             </Link>
           </Box>
 
-          {mdUp && <NavDesktop data={navConfig} />}
-
           <Stack spacing={2} direction="row" alignItems="center" justifyContent="flex-end">
             <Stack spacing={1} direction="row" alignItems="center">
               <Searchbar />
@@ -114,8 +108,6 @@ export default function Header({ headerOnDark }: Props) {
                 </Button>
               ))}
           </Stack>
-
-          {!mdUp && <NavMobile data={navConfig} />}
         </Container>
       </Toolbar>
 

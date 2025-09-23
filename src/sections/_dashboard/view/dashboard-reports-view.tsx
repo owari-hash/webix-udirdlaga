@@ -13,7 +13,6 @@ import { alpha, useTheme } from '@mui/material/styles';
 
 import Iconify from 'src/components/iconify';
 
-
 // ----------------------------------------------------------------------
 
 const REPORT_TYPES = [
@@ -73,7 +72,7 @@ const RECENT_REPORTS = [
     title: 'Сарын системийн тайлан - 2024 оны 1-р сар',
     type: 'system',
     organization: 'Бүх байгууллага',
-    generatedBy: 'Супер админ',
+    generatedBy: 'Сүпер админ',
     generatedAt: '2024-01-31 23:59',
     status: 'completed',
     size: '2.4 MB',
@@ -84,7 +83,7 @@ const RECENT_REPORTS = [
     title: 'Монгол Улсын Их Сургуулийн тайлан',
     type: 'organization',
     organization: 'Монгол Улсын Их Сургууль',
-    generatedBy: 'Супер админ',
+    generatedBy: 'Сүпер админ',
     generatedAt: '2024-01-30 14:30',
     status: 'completed',
     size: '1.8 MB',
@@ -95,7 +94,7 @@ const RECENT_REPORTS = [
     title: 'Хэрэглэгчийн идэвхийн тайлан',
     type: 'user',
     organization: 'Бүх байгууллага',
-    generatedBy: 'Супер админ',
+    generatedBy: 'Сүпер админ',
     generatedAt: '2024-01-29 10:15',
     status: 'generating',
     size: '-',
@@ -106,7 +105,7 @@ const RECENT_REPORTS = [
     title: 'Вэбтооны үзэлтийн тайлан',
     type: 'webtoon',
     organization: 'Бүх байгууллага',
-    generatedBy: 'Супер админ',
+    generatedBy: 'Сүпер админ',
     generatedAt: '2024-01-28 16:45',
     status: 'completed',
     size: '3.2 MB',
@@ -117,7 +116,7 @@ const RECENT_REPORTS = [
     title: 'Санхүүгийн сарын тайлан',
     type: 'financial',
     organization: 'Бүх байгууллага',
-    generatedBy: 'Супер админ',
+    generatedBy: 'Сүпер админ',
     generatedAt: '2024-01-27 09:20',
     status: 'completed',
     size: '1.5 MB',
@@ -164,7 +163,6 @@ export default function DashboardReportsView() {
 
   return (
     <Container maxWidth="xl">
-
       {/* Report Types */}
       <Box sx={{ mb: 4 }}>
         <Typography variant="h6" sx={{ mb: 3 }}>
@@ -186,11 +184,8 @@ export default function DashboardReportsView() {
                 border: '1px solid',
                 borderColor: 'divider',
                 '&:hover': {
-                  borderColor: theme.palette[type.color as keyof typeof theme.palette].main,
-                  bgcolor: alpha(
-                    theme.palette[type.color as keyof typeof theme.palette].main,
-                    0.04
-                  ),
+                  borderColor: (theme.palette as any)[type.color].main,
+                  bgcolor: alpha((theme.palette as any)[type.color].main, 0.04),
                 },
               }}
             >
@@ -203,11 +198,8 @@ export default function DashboardReportsView() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    bgcolor: alpha(
-                      theme.palette[type.color as keyof typeof theme.palette].main,
-                      0.08
-                    ),
-                    color: theme.palette[type.color as keyof typeof theme.palette].main,
+                    bgcolor: alpha((theme.palette as any)[type.color].main, 0.08),
+                    color: (theme.palette as any)[type.color].main,
                   }}
                 >
                   <Iconify icon={type.icon} width={24} />
@@ -347,13 +339,10 @@ export default function DashboardReportsView() {
                       py: 0.5,
                       borderRadius: 1,
                       bgcolor: alpha(
-                        theme.palette[getStatusColor(report.status) as keyof typeof theme.palette]
-                          .main,
+                        (theme.palette as any)[getStatusColor(report.status)].main,
                         0.1
                       ),
-                      color:
-                        theme.palette[getStatusColor(report.status) as keyof typeof theme.palette]
-                          .main,
+                      color: (theme.palette as any)[getStatusColor(report.status)].main,
                     }}
                   >
                     <Typography variant="caption" fontWeight="bold">

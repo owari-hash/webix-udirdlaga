@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import MarketingNewsletter from '../marketing-newsletter';
 import MarketingContactInfo from '../contact/marketing-contact-info';
 import MarketingContactForm from '../contact/marketing-contact-form';
-import MarketingLandingFreeSEO from '../landing/marketing-landing-free-seo';
+import DashboardLandingFreeSEO from '../../_dashboard/landing/dashboard-landing-free-seo';
 
 // ----------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ export default function MarketingContactView() {
         </Grid>
       </Container>
 
-      <MarketingLandingFreeSEO />
+      <DashboardLandingFreeSEO />
 
       <MarketingNewsletter />
     </>

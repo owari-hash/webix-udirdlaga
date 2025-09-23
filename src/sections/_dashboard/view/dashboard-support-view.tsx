@@ -6,16 +6,14 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import Iconify from 'src/components/iconify';
-import { paths } from 'src/routes/paths';
-
 
 // ----------------------------------------------------------------------
 
@@ -31,7 +29,7 @@ const SUPPORT_TICKETS = [
     createdBy: 'Батбаяр',
     createdAt: '2024-01-20 14:30',
     lastActivity: '2024-01-20 16:45',
-    assignee: 'Супер админ',
+    assignee: 'Сүпер админ',
     comments: 3,
   },
   {
@@ -45,7 +43,7 @@ const SUPPORT_TICKETS = [
     createdBy: 'Сэрээ',
     createdAt: '2024-01-19 10:15',
     lastActivity: '2024-01-20 09:30',
-    assignee: 'Супер админ',
+    assignee: 'Сүпер админ',
     comments: 5,
   },
   {
@@ -59,7 +57,7 @@ const SUPPORT_TICKETS = [
     createdBy: 'Оюунчимэг',
     createdAt: '2024-01-18 16:20',
     lastActivity: '2024-01-19 11:15',
-    assignee: 'Супер админ',
+    assignee: 'Сүпер админ',
     comments: 8,
   },
   {
@@ -87,7 +85,7 @@ const SUPPORT_TICKETS = [
     createdBy: 'Ганбаатар',
     createdAt: '2024-01-16 09:30',
     lastActivity: '2024-01-17 14:20',
-    assignee: 'Супер админ',
+    assignee: 'Сүпер админ',
     comments: 12,
   },
 ];
@@ -133,21 +131,17 @@ export default function DashboardSupportView() {
       ? SUPPORT_TICKETS
       : SUPPORT_TICKETS.filter((ticket) => ticket.category === selectedCategory);
 
-  const getPriorityColor = (priority: string) => {
-    return PRIORITY_COLORS[priority as keyof typeof PRIORITY_COLORS] || 'default';
-  };
+  const getPriorityColor = (priority: string) =>
+    PRIORITY_COLORS[priority as keyof typeof PRIORITY_COLORS] || 'default';
 
-  const getStatusColor = (status: string) => {
-    return STATUS_COLORS[status as keyof typeof STATUS_COLORS] || 'default';
-  };
+  const getStatusColor = (status: string) =>
+    STATUS_COLORS[status as keyof typeof STATUS_COLORS] || 'default';
 
-  const getStatusLabel = (status: string) => {
-    return STATUS_LABELS[status as keyof typeof STATUS_LABELS] || status;
-  };
+  const getStatusLabel = (status: string) =>
+    STATUS_LABELS[status as keyof typeof STATUS_LABELS] || status;
 
   return (
     <Container maxWidth="xl">
-
       {/* Support Stats */}
       <Box
         sx={{

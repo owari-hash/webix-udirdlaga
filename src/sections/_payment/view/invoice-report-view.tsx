@@ -180,10 +180,7 @@ export default function InvoiceReportView() {
                   width: 64,
                   height: 64,
                   borderRadius: '50%',
-                  bgcolor: alpha(
-                    theme.palette[metric.color as keyof typeof theme.palette].main,
-                    0.1
-                  ),
+                  bgcolor: alpha((theme.palette as any)[metric.color].main, 0.1),
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -192,7 +189,7 @@ export default function InvoiceReportView() {
                 <Iconify
                   icon={metric.icon}
                   width={32}
-                  color={theme.palette[metric.color as keyof typeof theme.palette].main}
+                  color={(theme.palette as any)[metric.color].main}
                 />
               </Box>
             </Stack>

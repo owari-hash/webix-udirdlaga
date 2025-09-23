@@ -64,8 +64,8 @@ export default function DashboardLandingFreeSEO() {
                 textAlign: { xs: 'center', md: 'left' },
               }}
             >
-              Get Free
-              <br /> SEO Analysis
+              Үнэгүй
+              <br /> SEO шинжилгээ
             </Typography>
 
             <Stack
@@ -94,16 +94,16 @@ export default function DashboardLandingFreeSEO() {
 
           <Grid xs={12} md={5}>
             <Stack alignItems={{ xs: 'center', md: 'flex-start' }}>
-              <StyledInput label="Name" sx={{ mb: 2.5 }} />
+              <StyledInput label="Нэр" sx={{ mb: 2.5 }} />
 
-              <StyledInput label="Email" sx={{ mb: 2.5 }} />
+              <StyledInput label="И-мэйл" sx={{ mb: 2.5 }} />
 
-              <StyledInput label="Phone" sx={{ mb: 2.5 }} />
+              <StyledInput label="Утас" sx={{ mb: 2.5 }} />
 
-              <StyledInput label="Website URL" sx={{ mb: 5 }} />
+              <StyledInput label="Вэбсайтын хаяг" sx={{ mb: 5 }} />
 
               <Button size="large" variant="contained" color="primary">
-                Send Request
+                Хүсэлт илгээх
               </Button>
             </Stack>
           </Grid>

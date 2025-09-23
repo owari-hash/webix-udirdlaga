@@ -25,7 +25,7 @@ import PostTags from '../../blog/common/post-tags';
 import PostAuthor from '../../blog/common/post-author';
 import MarketingNewsletter from '../marketing-newsletter';
 import PostSocialsShare from '../../blog/common/post-socials-share';
-import MarketingLandingFreeSEO from '../landing/marketing-landing-free-seo';
+import DashboardLandingFreeSEO from '../../_dashboard/landing/dashboard-landing-free-seo';
 import BlogMarketingLatestPosts from '../../blog/marketing/marketing-latest-posts';
 
 // ----------------------------------------------------------------------
@@ -133,7 +133,7 @@ export default function MarketingPostView() {
 
       <BlogMarketingLatestPosts posts={_marketingPosts.slice(0, 4)} />
 
-      <MarketingLandingFreeSEO />
+      <DashboardLandingFreeSEO />
 
       <MarketingNewsletter />
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { useMemo, useState, ReactNode, useContext, useCallback, createContext } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -32,12 +32,15 @@ export function SidebarProvider({ children }: SidebarProviderProps) {
     setOpen(true);
   }, []);
 
-  const value = {
-    open,
-    onToggle,
-    onClose,
-    onOpen,
-  };
+  const value = useMemo(
+    () => ({
+      open,
+      onToggle,
+      onClose,
+      onOpen,
+    }),
+    [open, onToggle, onClose, onOpen]
+  );
 
   return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>;
 }

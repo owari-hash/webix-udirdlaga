@@ -94,48 +94,10 @@
         "argsIgnorePattern": "^_"
       }
     ],
-    "perfectionist/sort-imports": [
-      2,
-      {
-        "type": "line-length",
-        "order": "asc",
-        "newlines-between": "always",
-        "groups": [
-          [
-            "builtin",
-            "external"
-          ],
-          "mui",
-          "internal",
-          "parent",
-          "sibling",
-          "object",
-          "unknown"
-        ],
-        "custom-groups": {
-          "value": {
-            "mui": "@mui/**",
-            "internal": "src/**",
-            "parent": "../**",
-            "sibling": "./**"
-          }
-        },
-        "read-tsconfig": true
-      }
-    ],
-    "perfectionist/sort-named-imports": [
-      2,
-      {
-        "type": "line-length",
-        "order": "asc"
-      }
-    ],
-    "perfectionist/sort-exports": [
-      2,
-      {
-        "type": "line-length",
-        "order": "asc"
-      }
-    ]
+    "perfectionist/sort-imports": 0,
+    "perfectionist/sort-named-imports": 0,
+    "perfectionist/sort-exports": 0,
+    "no-nested-ternary": 0,
+    "react/jsx-no-constructed-context-values": 0
   }
 }

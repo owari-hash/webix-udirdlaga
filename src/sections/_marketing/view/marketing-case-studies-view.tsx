@@ -9,7 +9,7 @@ import { _caseStudies, _testimonials, _marketingPosts } from 'src/_mock';
 import MarketingNewsletter from '../marketing-newsletter';
 import MarketingCaseStudyList from '../list/marketing-case-study-list';
 import MarketingTestimonial from '../testimonial/marketing-testimonial';
-import MarketingLandingFreeSEO from '../landing/marketing-landing-free-seo';
+import DashboardLandingFreeSEO from '../../_dashboard/landing/dashboard-landing-free-seo';
 import BlogMarketingLatestPosts from '../../blog/marketing/marketing-latest-posts';
 
 // ----------------------------------------------------------------------
@@ -40,7 +40,7 @@ export default function MarketingCaseStudiesView() {
 
       <BlogMarketingLatestPosts posts={_marketingPosts.slice(0, 4)} />
 
-      <MarketingLandingFreeSEO />
+      <DashboardLandingFreeSEO />
 
       <MarketingNewsletter />
     </>

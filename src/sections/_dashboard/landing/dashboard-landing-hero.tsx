@@ -47,16 +47,16 @@ export default function DashboardLandingHero() {
             }}
           >
             <Typography variant="overline" sx={{ color: 'secondary.main' }}>
-              Digital Marketing
+              Дижитал маркетинг
             </Typography>
 
             <Typography variant="h1" sx={{ my: 3 }}>
-              Boosts Your Website Traffic
+              Таны вэбсайтын трафикийг нэмэгдүүлнэ
             </Typography>
 
             <Typography sx={{ color: 'text.secondary' }}>
-              Etiam sollicitudin, ipsum eu pulvinar rutrum, tellus ipsum laoreet sapien, quis
-              venenatis ante odio sit amet eros.
+              Манай дижитал маркетингийн шийдлүүд таны бизнесийг өсөхөд тусална. Үр дүнтэй стратеги
+              боловсруулж, зорилтот үйлчлүүлэгчдэдээ хүрээрэй.
             </Typography>
 
             <Stack
@@ -67,14 +67,14 @@ export default function DashboardLandingHero() {
               sx={{ mt: 5 }}
             >
               <Button variant="contained" color="inherit" size="large">
-                Try For Free
+                Үнэгүй туршиж үзэх
               </Button>
 
               <Stack direction="row" alignItems="center" sx={{ typography: 'h6' }}>
                 <Fab size="medium" sx={{ mr: 1 }}>
                   <Iconify width={24} icon="carbon:play" />
                 </Fab>
-                See Our Work
+                Бидний ажлыг үзэх
               </Stack>
             </Stack>
           </Grid>

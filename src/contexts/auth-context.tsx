@@ -13,9 +13,16 @@ import {
 
 // ----------------------------------------------------------------------
 
+type User = {
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  role?: string;
+};
+
 type AuthContextType = {
   isAuthenticated: boolean;
-  user: { email: string } | null;
+  user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
 };
@@ -30,7 +37,7 @@ type Props = {
 
 export function AuthProvider({ children }: Props) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<{ email: string } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
   // Check for existing authentication on mount
@@ -49,14 +56,21 @@ export function AuthProvider({ children }: Props) {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // For demo purposes, accept any email/password
+      const userData: User = {
+        email,
+        displayName: email.split('@')[0],
+        role: 'admin',
+        photoURL: undefined,
+      };
+
       const authData = {
-        user: { email },
+        user: userData,
         isAuthenticated: true,
       };
 
       localStorage.setItem('auth', JSON.stringify(authData));
       setIsAuthenticated(true);
-      setUser({ email });
+      setUser(userData);
 
       return true;
     } catch (error) {

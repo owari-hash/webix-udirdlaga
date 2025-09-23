@@ -221,28 +221,9 @@ export const navConfig = [
     navKey: 'settings',
   },
   {
-    title: 'Дэмжлэг',
+    title: 'Санал хүсэлт',
     path: paths.dashboard.support,
-    icon: 'solar:headphones-bold',
+    icon: 'solar:chat-square-like-bold',
     navKey: 'support',
-  },
-  {
-    title: 'Компонент',
-    path: paths.components.root,
-    icon: 'solar:widget-2-bold',
-    navKey: 'components',
-  },
-  {
-    title: 'Хуудас',
-    path: paths.pages,
-    icon: 'solar:file-bold',
-    navKey: 'pages',
-    children: [pageLinks[4], pageLinks[5]],
-  },
-  {
-    title: 'Баримт',
-    path: paths.docs,
-    icon: 'solar:book-bold',
-    navKey: 'docs',
   },
 ];

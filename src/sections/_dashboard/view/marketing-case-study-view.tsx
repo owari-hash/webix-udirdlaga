@@ -11,7 +11,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import MarketingNewsletter from '../marketing-newsletter';
 import MarketingTestimonial from '../testimonial/marketing-testimonial';
-import MarketingLandingFreeSEO from '../landing/marketing-landing-free-seo';
+import DashboardLandingFreeSEO from '../landing/dashboard-landing-free-seo';
 import MarketingCaseStudyListSimilar from '../list/marketing-case-study-list-similar';
 import MarketingCaseStudyDetailsGallery from '../details/marketing-case-study-details-gallery';
 import MarketingCaseStudyDetailsSummary from '../details/marketing-case-study-details-summary';
@@ -57,7 +57,7 @@ export default function MarketingCaseStudyView() {
 
       <MarketingCaseStudyListSimilar caseStudies={_caseStudies.slice(0, 3)} />
 
-      <MarketingLandingFreeSEO />
+      <DashboardLandingFreeSEO />
 
       <MarketingNewsletter />
     </>

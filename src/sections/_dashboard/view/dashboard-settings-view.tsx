@@ -15,7 +15,6 @@ import { alpha, useTheme } from '@mui/material/styles';
 
 import Iconify from 'src/components/iconify';
 
-
 // ----------------------------------------------------------------------
 
 const SETTINGS_SECTIONS = [
@@ -163,7 +162,7 @@ const NOTIFICATION_SETTINGS = [
 export default function DashboardSettingsView() {
   const theme = useTheme();
   const [activeSection, setActiveSection] = useState('general');
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<Record<string, any>>({
     ...GENERAL_SETTINGS.reduce((acc, setting) => ({ ...acc, [setting.key]: setting.value }), {}),
     ...SECURITY_SETTINGS.reduce((acc, setting) => ({ ...acc, [setting.key]: setting.value }), {}),
     ...NOTIFICATION_SETTINGS.reduce(
@@ -251,7 +250,6 @@ export default function DashboardSettingsView() {
 
   return (
     <Container maxWidth="xl">
-
       <Box sx={{ display: 'flex', gap: 3 }}>
         {/* Settings Sidebar */}
         <Card sx={{ width: 280, p: 2, height: 'fit-content' }}>
@@ -273,10 +271,10 @@ export default function DashboardSettingsView() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       bgcolor: alpha(
-                        theme.palette[section.color as keyof typeof theme.palette].main,
+                        (theme.palette as any)[section.color].main,
                         activeSection === section.id ? 0.2 : 0.08
                       ),
-                      color: theme.palette[section.color as keyof typeof theme.palette].main,
+                      color: (theme.palette as any)[section.color].main,
                     }}
                   >
                     <Iconify icon={section.icon} width={14} />

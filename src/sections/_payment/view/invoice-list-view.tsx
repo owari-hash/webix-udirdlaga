@@ -216,18 +216,18 @@ export default function InvoiceListView() {
                     <IconButton
                       size="small"
                       color="info"
-                      component={RouterLink}
-                      href={`${paths.payment.invoice.view}/${invoice.id}`}
-                      title="Үзэх"
+                      onClick={() => {
+                        window.location.href = `${paths.payment.invoice.view}/${invoice.id}`;
+                      }}
                     >
                       <Iconify icon="solar:eye-bold" />
                     </IconButton>
                     <IconButton
                       size="small"
                       color="warning"
-                      component={RouterLink}
-                      href={`${paths.payment.invoice.edit}/${invoice.id}`}
-                      title="Засах"
+                      onClick={() => {
+                        window.location.href = `${paths.payment.invoice.edit}/${invoice.id}`;
+                      }}
                     >
                       <Iconify icon="solar:pen-bold" />
                     </IconButton>

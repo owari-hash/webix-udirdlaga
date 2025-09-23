@@ -177,7 +177,7 @@ export default function PaymentManagementView() {
                   width: 64,
                   height: 64,
                   borderRadius: '50%',
-                  bgcolor: alpha(theme.palette[stat.color as keyof typeof theme.palette].main, 0.1),
+                  bgcolor: alpha((theme.palette as any)[stat.color].main, 0.1),
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -186,7 +186,7 @@ export default function PaymentManagementView() {
                 <Iconify
                   icon={stat.icon}
                   width={32}
-                  color={theme.palette[stat.color as keyof typeof theme.palette].main}
+                  color={(theme.palette as any)[stat.color].main}
                 />
               </Box>
             </Stack>
@@ -229,10 +229,7 @@ export default function PaymentManagementView() {
                       width: 48,
                       height: 48,
                       borderRadius: 1.5,
-                      bgcolor: alpha(
-                        theme.palette[action.color as keyof typeof theme.palette].main,
-                        0.1
-                      ),
+                      bgcolor: alpha((theme.palette as any)[action.color].main, 0.1),
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -241,7 +238,7 @@ export default function PaymentManagementView() {
                     <Iconify
                       icon={action.icon}
                       width={24}
-                      color={theme.palette[action.color as keyof typeof theme.palette].main}
+                      color={(theme.palette as any)[action.color].main}
                     />
                   </Box>
                   <Box>
@@ -293,9 +290,7 @@ export default function PaymentManagementView() {
                         py: 0.5,
                         borderRadius: 0.5,
                         bgcolor: alpha(
-                          theme.palette[
-                            getStatusColor(payment.status) as keyof typeof theme.palette
-                          ].main,
+                          (theme.palette as any)[getStatusColor(payment.status)].main,
                           0.1
                         ),
                       }}

@@ -4,17 +4,18 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 import Box from '@mui/material/Box';
-import List from '@mui/material/List';
 import Chip from '@mui/material/Chip';
+import List from '@mui/material/List';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
-import ListItem from '@mui/material/ListItem';
 import Collapse from '@mui/material/Collapse';
+import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemButton from '@mui/material/ListItemButton';
 
+import Image from 'src/components/image';
 import Iconify from 'src/components/iconify';
 import { useNavigation } from 'src/hooks/use-navigation';
 import { navConfig } from 'src/layouts/main/config-navigation';
@@ -265,25 +266,18 @@ export default function Sidebar({ open, onClose, variant = 'persistent' }: Sideb
         {/* Header */}
         <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Box
+            <Image
+              src="/assets/logo/webix-logo.png"
+              alt="Webix Logo"
               sx={{
-                width: 40,
-                height: 40,
-                borderRadius: 1.5,
-                backgroundColor: 'primary.main',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                width: 48,
+                height: 48,
+                borderRadius: 2,
               }}
-            >
-              <Iconify icon="solar:home-2-bold" width={24} sx={{ color: 'primary.contrastText' }} />
-            </Box>
+            />
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>
-                Webix Удирдлага
-              </Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                Олон байгууллагын хяналтын самбар
+                Удирдлага
               </Typography>
             </Box>
           </Stack>
