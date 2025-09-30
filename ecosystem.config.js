@@ -4,7 +4,7 @@ module.exports = {
       name: 'webix-udirdlaga',
       script: 'npm',
       args: 'start',
-      cwd: './',
+      cwd: '/home/anzaidev/udirdlaga-frontend',
       instances: 1,
       autorestart: true,
       watch: false,
