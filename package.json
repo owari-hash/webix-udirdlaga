@@ -1,13 +1,13 @@
 {
-  "name": "@zone-kit/next-ts",
-  "author": "Minimals",
-  "version": "2.1.0",
-  "description": "Next & TypeScript",
+  "name": "turshilt",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev -p 8003",
-    "start": "next start",
     "build": "next build",
+    "start": "next start -p 8003",
+    "pm2": "pm2 start yarn --name \"webix-app\" --interpreter bash -- start -p 8003",
+    "update": "git pull && npm run build && pm2 reload webix-udirdlaga",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
@@ -81,6 +81,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-unused-imports": "^2.0.0",
+    "pm2": "^5.3.0",
     "prettier": "^3.0.0",
     "typescript": "^5.1.6"
   }
