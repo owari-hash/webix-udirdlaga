@@ -6,7 +6,7 @@
     "dev": "next dev -p 8003",
     "build": "next build",
     "start": "next start -p 8003",
-    "pm2": "pm2 start yarn --name \"webix-app\" --interpreter bash -- start -p 8003",
+    "pm2": "pm2 start yarn --name \"webix\" --interpreter bash -- start -p 8003",
     "update": "git pull && npm run build && pm2 reload webix-udirdlaga",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
