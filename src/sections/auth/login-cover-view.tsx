@@ -21,13 +21,15 @@ import { RouterLink } from 'src/routes/components';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useAuth } from 'src/contexts/auth-context';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import { useSnackbar } from 'src/components/snackbar';
 
 // ----------------------------------------------------------------------
 
 export default function LoginCoverView() {
   const passwordShow = useBoolean();
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, isLoading } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().required('Email is required').email('That is not an email'),
@@ -54,17 +56,17 @@ export default function LoginCoverView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const success = await login(data.email, data.password);
-      if (success) {
+      const result = await login({ email: data.email, password: data.password });
+      if (result.success) {
         reset();
-        console.log('Login successful:', data);
-        // Redirect to dashboard after successful login
+        enqueueSnackbar('Login successful!', { variant: 'success' });
         router.push(paths.dashboard.root);
       } else {
-        console.error('Login failed');
+        enqueueSnackbar(result.error || 'Login failed', { variant: 'error' });
       }
     } catch (error) {
       console.error(error);
+      enqueueSnackbar('An unexpected error occurred', { variant: 'error' });
     }
   });
 
@@ -141,7 +143,7 @@ export default function LoginCoverView() {
           size="large"
           type="submit"
           variant="contained"
-          loading={isSubmitting}
+          loading={isSubmitting || isLoading}
         >
           Login
         </LoadingButton>

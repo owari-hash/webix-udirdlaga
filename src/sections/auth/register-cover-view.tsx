@@ -19,17 +19,21 @@ import Iconify from 'src/components/iconify';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { RouterLink } from 'src/routes/components';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import { useAuth } from 'src/contexts/auth-context';
+import { useSnackbar } from 'src/components/snackbar';
 
 // ----------------------------------------------------------------------
 
 export default function RegisterCoverView() {
   const passwordShow = useBoolean();
+  const { register, isLoading } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
   const RegisterSchema = Yup.object().shape({
-    fullName: Yup.string()
-      .required('Full name is required')
-      .min(6, 'Mininum 6 characters')
-      .max(15, 'Maximum 15 characters'),
+    displayName: Yup.string()
+      .required('Display name is required')
+      .min(2, 'Minimum 2 characters')
+      .max(50, 'Maximum 50 characters'),
     email: Yup.string().required('Email is required').email('That is not an email'),
     password: Yup.string()
       .required('Password is required')
@@ -40,7 +44,7 @@ export default function RegisterCoverView() {
   });
 
   const defaultValues = {
-    fullName: '',
+    displayName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -59,11 +63,28 @@ export default function RegisterCoverView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      console.log('DATA', data);
+      const result = await register({
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+        displayName: data.displayName,
+      });
+
+      if (result.success) {
+        reset();
+        enqueueSnackbar(
+          'Registration successful! Please check your email to verify your account.',
+          {
+            variant: 'success',
+            duration: 6000,
+          }
+        );
+      } else {
+        enqueueSnackbar(result.error || 'Registration failed', { variant: 'error' });
+      }
     } catch (error) {
       console.error(error);
+      enqueueSnackbar('An unexpected error occurred', { variant: 'error' });
     }
   });
 
@@ -107,7 +128,7 @@ export default function RegisterCoverView() {
   const renderForm = (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Stack spacing={2.5}>
-        <RHFTextField name="fullName" label="Full Name" />
+        <RHFTextField name="displayName" label="Display Name" />
 
         <RHFTextField name="email" label="Email address" />
 
@@ -147,7 +168,7 @@ export default function RegisterCoverView() {
           size="large"
           type="submit"
           variant="contained"
-          loading={isSubmitting}
+          loading={isSubmitting || isLoading}
         >
           Register
         </LoadingButton>
