@@ -112,8 +112,6 @@ export default function InvoiceSendView() {
   } = methods;
 
   const watchedInvoiceId = watch('invoiceId');
-  const watchedSubject = watch('subject');
-  const watchedMessage = watch('message');
 
   const selectedInvoice = MOCK_INVOICES.find((inv) => inv.id === watchedInvoiceId);
 

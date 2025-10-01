@@ -1,0 +1,43 @@
+// ----------------------------------------------------------------------
+
+export type AuthTokens = {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+};
+
+export type User = {
+  _id: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+  role: 'super_admin' | 'org_admin' | 'org_moderator' | 'org_user' | 'viewer';
+  isActive: boolean;
+  twoFactorEnabled: boolean;
+  lastLoginAt?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type LoginCredentials = {
+  email: string;
+  password: string;
+};
+
+export type RegisterCredentials = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  displayName?: string;
+};
+
+export type AuthContextType = {
+  user: User | null;
+  tokens: AuthTokens | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  register: (credentials: RegisterCredentials) => Promise<void>;
+  logout: () => void;
+  refreshAuth: () => Promise<void>;
+};

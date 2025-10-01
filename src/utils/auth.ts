@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { User, AuthTokens } from 'src/contexts/auth-context';
+import { User, AuthTokens } from 'src/types/auth';
 
 // ----------------------------------------------------------------------
 
@@ -122,7 +122,7 @@ export function generateRandomString(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
 
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < length; i += 1) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
 

@@ -28,7 +28,7 @@ export default function UnauthorizedPage() {
         </Typography>
 
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          You don't have permission to access this page.
+          You don&apos;t have permission to access this page.
         </Typography>
 
         <Button variant="contained" size="large" onClick={() => router.back()}>

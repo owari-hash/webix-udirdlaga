@@ -21,3 +21,6 @@ export function LoadingScreen() {
     </Box>
   );
 }
+
+// Export as SplashScreen for backward compatibility
+export const SplashScreen = LoadingScreen;

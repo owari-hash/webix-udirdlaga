@@ -1,4 +1,4 @@
-import { AuthTokens } from 'src/contexts/auth-context';
+import { AuthTokens } from 'src/types/auth';
 import { API_CONFIG } from 'src/config/api';
 
 // ----------------------------------------------------------------------

@@ -12,58 +12,18 @@ import {
 } from 'react';
 import { apiClient } from 'src/utils/api-client';
 import { API_CONFIG } from 'src/config/api';
+import {
+  User,
+  AuthTokens,
+  LoginCredentials,
+  RegisterCredentials,
+  AuthContextType,
+} from 'src/types/auth';
 
 // ----------------------------------------------------------------------
 
-export type User = {
-  _id: string;
-  email: string;
-  displayName: string;
-  photoURL?: string;
-  role: 'super_admin' | 'org_admin' | 'org_moderator' | 'org_user' | 'viewer';
-  isActive: boolean;
-  twoFactorEnabled: boolean;
-  lastLoginAt?: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type AuthTokens = {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-};
-
-export type LoginCredentials = {
-  email: string;
-  password: string;
-};
-
-export type RegisterCredentials = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  displayName?: string;
-};
-
-export type AuthContextType = {
-  // State
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  user: User | null;
-  tokens: AuthTokens | null;
-
-  // Actions
-  login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>;
-  register: (credentials: RegisterCredentials) => Promise<{ success: boolean; error?: string }>;
-  logout: () => void;
-  refreshToken: () => Promise<boolean>;
-  updateUser: (userData: Partial<User>) => void;
-
-  // Utilities
-  hasRole: (role: string) => boolean;
-  hasAnyRole: (roles: string[]) => boolean;
-};
+// Re-export the type from the types file
+export type { AuthContextType } from 'src/types/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -98,9 +58,7 @@ export function AuthProvider({ children }: Props) {
             apiClient.setTokens(storedTokens);
           } else if (storedTokens?.refreshToken) {
             // Try to refresh the token
-            const refreshed = await refreshToken();
-            if (refreshed) {
-            }
+            await refreshToken();
           }
         }
       } catch (error) {
@@ -128,7 +86,7 @@ export function AuthProvider({ children }: Props) {
 
       return () => clearTimeout(timeoutId);
     }
-  }, [tokens]);
+  }, [tokens, refreshToken]);
 
   const login = useCallback(
     async (credentials: LoginCredentials): Promise<{ success: boolean; error?: string }> => {

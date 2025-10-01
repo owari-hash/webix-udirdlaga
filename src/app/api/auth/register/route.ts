@@ -2,14 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+// User type definition
+type User = {
+  id: string;
+  email: string;
+  password: string;
+  displayName: string;
+  role: 'super_admin' | 'org_admin' | 'org_moderator' | 'org_user' | 'viewer';
+  isEmailVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
 // Mock user database - replace with actual database
-let users = [
+const users: User[] = [
   {
     id: '1',
     email: 'admin@example.com',
     password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
     displayName: 'Admin User',
-    role: 'admin' as const,
+    role: 'super_admin',
     isEmailVerified: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -52,7 +64,7 @@ export async function POST(request: NextRequest) {
       email,
       password: hashedPassword,
       displayName: displayName || email.split('@')[0],
-      role: 'user' as const,
+      role: 'org_user' as const,
       isEmailVerified: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

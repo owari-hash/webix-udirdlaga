@@ -33,7 +33,6 @@ export function ProtectedRoute({
     // If user doesn't have required role, redirect to unauthorized
     if (roles.length > 0 && !hasAnyRole(roles)) {
       router.push('/unauthorized');
-      return;
     }
   }, [isAuthenticated, isLoading, user, roles, redirectTo, router, hasAnyRole]);
 

@@ -16,10 +16,9 @@ export function useAuthActions() {
         if (result.success) {
           enqueueSnackbar('Login successful!', { variant: 'success' });
           return { success: true };
-        } else {
-          enqueueSnackbar(result.error || 'Login failed', { variant: 'error' });
-          return { success: false, error: result.error };
         }
+        enqueueSnackbar(result.error || 'Login failed', { variant: 'error' });
+        return { success: false, error: result.error };
       } catch (error) {
         console.error('Login error:', error);
         enqueueSnackbar('An unexpected error occurred', { variant: 'error' });
@@ -48,10 +47,9 @@ export function useAuthActions() {
             }
           );
           return { success: true };
-        } else {
-          enqueueSnackbar(result.error || 'Registration failed', { variant: 'error' });
-          return { success: false, error: result.error };
         }
+        enqueueSnackbar(result.error || 'Registration failed', { variant: 'error' });
+        return { success: false, error: result.error };
       } catch (error) {
         console.error('Registration error:', error);
         enqueueSnackbar('An unexpected error occurred', { variant: 'error' });

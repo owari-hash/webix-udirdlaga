@@ -1,4 +1,4 @@
-import { Barlow, Public_Sans } from 'next/font/google';
+// import { Barlow, Public_Sans } from 'next/font/google';
 
 // ----------------------------------------------------------------------
 
@@ -30,19 +30,19 @@ declare module '@mui/material/styles' {
   }
 }
 
-export const primaryFont = Public_Sans({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-  fallback: ['Helvetica', 'Arial', 'sans-serif'],
-});
+export const primaryFont = {
+  style: {
+    fontFamily: 'Helvetica, Arial, sans-serif',
+  },
+  className: 'primary-font',
+};
 
-export const secondaryFont = Barlow({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-  fallback: ['Helvetica', 'Arial', 'sans-serif'],
-});
+export const secondaryFont = {
+  style: {
+    fontFamily: 'Helvetica, Arial, sans-serif',
+  },
+  className: 'secondary-font',
+};
 
 // ----------------------------------------------------------------------
 

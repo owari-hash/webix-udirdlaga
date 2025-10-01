@@ -35,9 +35,8 @@ export function withAuth<P extends object>(
       // If user is authenticated but doesn't have required role
       if (isAuthenticated && roles.length > 0 && !hasAnyRole(roles)) {
         router.push('/unauthorized');
-        return;
       }
-    }, [isAuthenticated, isLoading, user, roles, requireAuth, redirectTo, router, hasAnyRole]);
+    }, [isAuthenticated, isLoading, user, router, hasAnyRole]);
 
     // Show loading screen while checking authentication
     if (isLoading) {

@@ -2,14 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+// User type definition
+type User = {
+  id: string;
+  email: string;
+  password: string;
+  displayName: string;
+  role: 'super_admin' | 'org_admin' | 'org_moderator' | 'org_user' | 'viewer';
+  isEmailVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
 // Mock user database - replace with actual database
-const users = [
+const users: User[] = [
   {
     id: '1',
     email: 'admin@example.com',
     password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
     displayName: 'Admin User',
-    role: 'admin' as const,
+    role: 'super_admin' as const,
     isEmailVerified: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -19,7 +31,7 @@ const users = [
     email: 'user@example.com',
     password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
     displayName: 'Regular User',
-    role: 'user' as const,
+    role: 'org_user' as const,
     isEmailVerified: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
