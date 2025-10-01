@@ -89,7 +89,6 @@ const TOP_ORGANIZATIONS = [
 export default function InvoiceReportView() {
   const theme = useTheme();
   const [selectedPeriod, setSelectedPeriod] = useState('6months');
-  const [selectedStatus, setSelectedStatus] = useState('all');
 
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat('mn-MN', {
@@ -97,32 +96,6 @@ export default function InvoiceReportView() {
       currency: 'MNT',
       minimumFractionDigits: 0,
     }).format(amount);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return 'success';
-      case 'pending':
-        return 'warning';
-      case 'overdue':
-        return 'error';
-      default:
-        return 'default';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return 'Төлөгдсөн';
-      case 'pending':
-        return 'Хүлээгдэж буй';
-      case 'overdue':
-        return 'Хугацаа хэтэрсэн';
-      default:
-        return 'Тодорхойгүй';
-    }
-  };
 
   return (
     <Container maxWidth="xl">

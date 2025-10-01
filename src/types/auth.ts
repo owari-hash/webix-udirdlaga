@@ -36,8 +36,11 @@ export type AuthContextType = {
   tokens: AuthTokens | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (credentials: LoginCredentials) => Promise<void>;
-  register: (credentials: RegisterCredentials) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>;
+  register: (credentials: RegisterCredentials) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
-  refreshAuth: () => Promise<void>;
+  refreshToken: () => Promise<boolean>;
+  updateUser: (userData: Partial<User>) => void;
+  hasRole: (role: string) => boolean;
+  hasAnyRole: (roles: string[]) => boolean;
 };

@@ -10,8 +10,6 @@ import Chip from '@mui/material/Chip';
 import Avatar from '@mui/material/Avatar';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------

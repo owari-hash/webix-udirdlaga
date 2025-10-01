@@ -21,8 +21,6 @@ import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------

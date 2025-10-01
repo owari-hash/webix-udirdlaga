@@ -13,7 +13,6 @@ import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import Container from '@mui/material/Container';
-import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
@@ -85,7 +84,6 @@ const STATUS_CONFIG = {
 };
 
 export default function InvoiceListView() {
-  const theme = useTheme();
   const [invoices, setInvoices] = useState(MOCK_INVOICES);
   const [filterStatus, setFilterStatus] = useState('all');
 

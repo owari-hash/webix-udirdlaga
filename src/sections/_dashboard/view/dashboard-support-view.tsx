@@ -124,7 +124,6 @@ const STATUS_LABELS = {
 export default function DashboardSupportView() {
   const theme = useTheme();
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedTicket, setSelectedTicket] = useState<any>(null);
 
   const filteredTickets =
     selectedCategory === 'all'
@@ -243,7 +242,9 @@ export default function DashboardSupportView() {
                       bgcolor: alpha(theme.palette.primary.main, 0.04),
                     },
                   }}
-                  onClick={() => setSelectedTicket(ticket)}
+                  onClick={() => {
+                    // TODO: Implement ticket selection functionality
+                  }}
                 >
                   <Box
                     sx={{

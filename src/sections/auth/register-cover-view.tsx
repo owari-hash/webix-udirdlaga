@@ -76,7 +76,6 @@ export default function RegisterCoverView() {
           'Registration successful! Please check your email to verify your account.',
           {
             variant: 'success',
-            duration: 6000,
           }
         );
       } else {

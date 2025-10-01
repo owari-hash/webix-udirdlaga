@@ -63,7 +63,7 @@ const MESSAGES = [
 // ----------------------------------------------------------------------
 
 export default function MessagesPopover() {
-  const [messages, setMessages] = useState(MESSAGES);
+  const [messages] = useState(MESSAGES);
   const [open, setOpen] = useState<HTMLElement | null>(null);
 
   const totalUnRead = messages.filter((item) => item.isUnRead === true).length;

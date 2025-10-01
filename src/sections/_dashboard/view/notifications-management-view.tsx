@@ -12,8 +12,6 @@ import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------

@@ -105,6 +105,7 @@ const TOP_ORGANIZATIONS = [
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CHART_DATA = {
   labels: ['1-р сар', '2-р сар', '3-р сар', '4-р сар', '5-р сар', '6-р сар'],
   datasets: [

@@ -1,10 +1,15 @@
+'use client';
+
 import { Box, Button, Container, Typography } from '@mui/material';
-import { useRouter } from 'next/navigation';
 
 // ----------------------------------------------------------------------
 
 export default function UnauthorizedPage() {
-  const router = useRouter();
+  const handleGoBack = () => {
+    if (typeof window !== 'undefined') {
+      window.history.back();
+    }
+  };
 
   return (
     <Container maxWidth="sm">
@@ -31,7 +36,7 @@ export default function UnauthorizedPage() {
           You don&apos;t have permission to access this page.
         </Typography>
 
-        <Button variant="contained" size="large" onClick={() => router.back()}>
+        <Button variant="contained" size="large" onClick={handleGoBack}>
           Go Back
         </Button>
       </Box>

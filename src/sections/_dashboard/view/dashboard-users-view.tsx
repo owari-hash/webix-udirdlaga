@@ -119,7 +119,6 @@ const USER_STATS = [
 export default function DashboardUsersView() {
   const theme = useTheme();
   const [users, setUsers] = useState(MOCK_USERS);
-  const [selectedUser, setSelectedUser] = useState<any>(null);
   const [filterStatus, setFilterStatus] = useState('all');
 
   const handleStatusChange = (userId: number, newStatus: string) => {
@@ -336,7 +335,13 @@ export default function DashboardUsersView() {
                 </Typography>
 
                 <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
-                  <IconButton size="small" color="info" onClick={() => setSelectedUser(user)}>
+                  <IconButton
+                    size="small"
+                    color="info"
+                    onClick={() => {
+                      // TODO: Implement user view functionality
+                    }}
+                  >
                     <Iconify icon="solar:eye-bold" width={16} />
                   </IconButton>
                   <IconButton

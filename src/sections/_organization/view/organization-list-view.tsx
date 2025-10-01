@@ -68,15 +68,9 @@ const MOCK_ORGANIZATIONS = [
 export default function OrganizationListView() {
   const theme = useTheme();
   const [organizations, setOrganizations] = useState(MOCK_ORGANIZATIONS);
-  const [selectedOrg, setSelectedOrg] = useState<any>(null);
 
-  const openAddDialog = useBoolean();
   const openEditDialog = useBoolean();
   const openDeleteDialog = useBoolean();
-
-  const handleDelete = (id: string) => {
-    setOrganizations(organizations.filter((org) => org.id !== id));
-  };
 
   const handleStatusToggle = (id: string) => {
     setOrganizations(
@@ -206,11 +200,7 @@ export default function OrganizationListView() {
                           <Iconify icon="solar:link-bold" />
                         </IconButton>
 
-                        <IconButton
-                          size="small"
-                          color="primary"
-                          onClick={() => setSelectedOrg(row)}
-                        >
+                        <IconButton size="small" color="primary">
                           <Iconify icon="solar:eye-bold" />
                         </IconButton>
 
@@ -218,7 +208,6 @@ export default function OrganizationListView() {
                           size="small"
                           color="warning"
                           onClick={() => {
-                            setSelectedOrg(row);
                             openEditDialog.onTrue();
                           }}
                         >
@@ -241,7 +230,6 @@ export default function OrganizationListView() {
                           size="small"
                           color="error"
                           onClick={() => {
-                            setSelectedOrg(row);
                             openDeleteDialog.onTrue();
                           }}
                         >

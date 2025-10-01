@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
     const expiresIn = Date.now() + 15 * 60 * 1000; // 15 minutes
 
     // Return user data and new tokens (exclude password)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
 
     return NextResponse.json({

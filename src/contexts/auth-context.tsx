@@ -71,22 +71,8 @@ export function AuthProvider({ children }: Props) {
     };
 
     initializeAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Auto-refresh token before expiration
-  useEffect(() => {
-    if (!tokens) return;
-
-    const timeUntilExpiry = tokens.expiresIn - Date.now() - 60000; // Refresh 1 minute before expiry
-
-    if (timeUntilExpiry > 0) {
-      const timeoutId = setTimeout(() => {
-        refreshToken();
-      }, timeUntilExpiry);
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [tokens, refreshToken]);
 
   const login = useCallback(
     async (credentials: LoginCredentials): Promise<{ success: boolean; error?: string }> => {
@@ -101,7 +87,15 @@ export function AuthProvider({ children }: Props) {
           return { success: false, error: response.message || 'Login failed' };
         }
 
-        const { user: userData, accessToken, refreshToken } = response.data;
+        const {
+          user: userData,
+          accessToken,
+          refreshToken,
+        } = response.data as {
+          user: User;
+          accessToken: string;
+          refreshToken: string;
+        };
 
         // Create tokens object with expiration time
         const authTokens = {
@@ -121,7 +115,6 @@ export function AuthProvider({ children }: Props) {
         setTokens(authTokens);
         setIsAuthenticated(true);
 
-        // Update API client with tokens
         apiClient.setTokens(authTokens);
 
         return { success: true };
@@ -188,7 +181,10 @@ export function AuthProvider({ children }: Props) {
 
       if (!response.success) return false;
 
-      const { accessToken, refreshToken: newRefreshToken } = response.data;
+      const { accessToken, refreshToken: newRefreshToken } = response.data as {
+        accessToken: string;
+        refreshToken: string;
+      };
 
       // Create new tokens object with expiration time
       const authTokens = {
@@ -216,6 +212,23 @@ export function AuthProvider({ children }: Props) {
       return false;
     }
   }, []);
+
+  // Auto-refresh token before expiration
+  useEffect(() => {
+    if (!tokens) return undefined;
+
+    const timeUntilExpiry = tokens.expiresIn - Date.now() - 60000; // Refresh 1 minute before expiry
+
+    if (timeUntilExpiry > 0) {
+      const timeoutId = setTimeout(() => {
+        refreshToken();
+      }, timeUntilExpiry);
+
+      return () => clearTimeout(timeoutId);
+    }
+
+    return undefined;
+  }, [tokens, refreshToken]);
 
   const logout = useCallback(() => {
     // Call logout API to invalidate tokens on server

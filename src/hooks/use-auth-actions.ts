@@ -43,7 +43,6 @@ export function useAuthActions() {
             'Registration successful! Please check your email to verify your account.',
             {
               variant: 'success',
-              duration: 6000,
             }
           );
           return { success: true };
