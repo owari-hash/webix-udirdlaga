@@ -42,25 +42,58 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const JWT_EXPIRES_IN = '15m';
 const REFRESH_TOKEN_EXPIRES_IN = '7d';
 
+// CORS headers
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+// Handle preflight requests
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: corsHeaders,
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
 
     // Validate input
     if (!email || !password) {
-      return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
+      return NextResponse.json(
+        { message: 'Email and password are required' },
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
+      );
     }
 
     // Find user by email
     const user = users.find((u) => u.email === email);
     if (!user) {
-      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json(
+        { message: 'Invalid credentials' },
+        {
+          status: 401,
+          headers: corsHeaders,
+        }
+      );
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json(
+        { message: 'Invalid credentials' },
+        {
+          status: 401,
+          headers: corsHeaders,
+        }
+      );
     }
 
     // Generate tokens
@@ -85,16 +118,27 @@ export async function POST(request: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
 
-    return NextResponse.json({
-      user: userWithoutPassword,
-      tokens: {
-        accessToken,
-        refreshToken,
-        expiresIn,
+    return NextResponse.json(
+      {
+        user: userWithoutPassword,
+        tokens: {
+          accessToken,
+          refreshToken,
+          expiresIn,
+        },
       },
-    });
+      {
+        headers: corsHeaders,
+      }
+    );
   } catch (error) {
     console.error('Login error:', error);
-    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      {
+        status: 500,
+        headers: corsHeaders,
+      }
+    );
   }
 }
