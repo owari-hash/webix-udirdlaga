@@ -98,7 +98,7 @@ Create a `.env.local` file in your Next.js project:
 
 ```env
 # Backend API URL
-NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:8003
 
 # Optional: JWT secrets for frontend fallback
 JWT_SECRET=your-super-secret-jwt-key
@@ -112,7 +112,7 @@ The frontend uses a centralized configuration system:
 ```typescript
 // src/config/api.ts
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003',
   ENDPOINTS: {
     AUTH: {
       LOGIN: '/api/auth/login',
@@ -241,7 +241,7 @@ Your backend supports Socket.IO for real-time updates:
 cd your-backend-directory
 npm install
 npm run dev
-# Server runs on http://localhost:3000
+# Server runs on http://localhost:8003
 ```
 
 ### 2. Start Frontend
@@ -267,12 +267,12 @@ npm run dev
 
 ```bash
 # Test login
-curl -X POST http://localhost:3000/api/auth/login \
+curl -X POST http://localhost:8003/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@webix.mn","password":"admin123"}'
 
 # Test registration
-curl -X POST http://localhost:3000/api/auth/register \
+curl -X POST http://localhost:8003/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"newuser@example.com","password":"password123","displayName":"New User"}'
 ```
@@ -342,17 +342,14 @@ const validateUserInput = (input: any) => {
 ### Common Issues
 
 1. **CORS Errors**
-
    - Ensure backend CORS is configured for frontend URL
    - Check `CLIENT_URL` environment variable
 
 2. **Token Issues**
-
    - Verify JWT secrets match between frontend/backend
    - Check token expiration times
 
 3. **API Connection**
-
    - Verify `NEXT_PUBLIC_API_URL` is correct
    - Ensure backend server is running
 
