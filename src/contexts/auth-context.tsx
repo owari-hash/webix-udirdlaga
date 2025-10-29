@@ -84,24 +84,21 @@ export function AuthProvider({ children }: Props) {
         });
 
         if (!response.success) {
-          return { success: false, error: response.message || 'Login failed' };
+          // Use Mongolian message if available, fallback to English
+          const errorMessage = response.message || 'Нэвтрэхэд алдаа гарлаа';
+          return { success: false, error: errorMessage };
         }
 
-        const {
-          user: userData,
-          accessToken,
-          refreshToken,
-        } = response.data as {
-          user: User;
-          accessToken: string;
-          refreshToken: string;
+        const { admin: userData, token: accessToken } = response.data as {
+          admin: User;
+          token: string;
         };
 
         // Create tokens object with expiration time
         const authTokens = {
           accessToken,
-          refreshToken,
-          expiresIn: Date.now() + 15 * 60 * 1000, // 15 minutes
+          refreshToken: accessToken, // Use access token as refresh token if not provided
+          expiresIn: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
         };
 
         // Store auth data
@@ -120,7 +117,7 @@ export function AuthProvider({ children }: Props) {
         return { success: true };
       } catch (error) {
         console.error('Login error:', error);
-        return { success: false, error: 'Network error. Please try again.' };
+        return { success: false, error: 'Сүлжээний алдаа. Дахин оролдоно уу.' };
       } finally {
         setIsLoading(false);
       }
@@ -135,7 +132,7 @@ export function AuthProvider({ children }: Props) {
 
         // Validate passwords match
         if (credentials.password !== credentials.confirmPassword) {
-          return { success: false, error: 'Passwords do not match' };
+          return { success: false, error: 'Нууц үг таарахгүй байна' };
         }
 
         const response = await apiClient.post(
@@ -149,13 +146,13 @@ export function AuthProvider({ children }: Props) {
         );
 
         if (!response.success) {
-          return { success: false, error: response.message || 'Registration failed' };
+          return { success: false, error: response.message || 'Бүртгэл амжилтгүй боллоо' };
         }
 
         return { success: true };
       } catch (error) {
         console.error('Registration error:', error);
-        return { success: false, error: 'Network error. Please try again.' };
+        return { success: false, error: 'Сүлжээний алдаа. Дахин оролдоно уу.' };
       } finally {
         setIsLoading(false);
       }

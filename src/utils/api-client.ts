@@ -76,7 +76,7 @@ class ApiClient {
       return {
         data: null as T,
         success: false,
-        message: 'Network error',
+        message: 'Сүлжээний алдаа',
         status: 0,
       };
     }

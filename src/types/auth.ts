@@ -7,20 +7,15 @@ export type AuthTokens = {
 };
 
 export type User = {
-  _id: string;
+  id: string;
+  username: string;
   email: string;
-  displayName: string;
-  photoURL?: string;
   role: 'super_admin' | 'org_admin' | 'org_moderator' | 'org_user' | 'viewer';
-  isActive: boolean;
-  twoFactorEnabled: boolean;
-  lastLoginAt?: string;
-  createdAt: string;
-  updatedAt: string;
+  lastLogin: string;
 };
 
 export type LoginCredentials = {
-  email: string;
+  username: string;
   password: string;
 };
 

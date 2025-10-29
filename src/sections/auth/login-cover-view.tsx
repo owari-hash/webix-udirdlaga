@@ -32,14 +32,12 @@ export default function LoginCoverView() {
   const { enqueueSnackbar } = useSnackbar();
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required').email('That is not an email'),
-    password: Yup.string()
-      .required('Password is required')
-      .min(6, 'Password should be of minimum 6 characters length'),
+    username: Yup.string().required('Хэрэглэгчийн нэр шаардлагатай'),
+    password: Yup.string().required('Нууц үг шаардлагатай'),
   });
 
   const defaultValues = {
-    email: '',
+    username: '',
     password: '',
   };
 
@@ -56,17 +54,25 @@ export default function LoginCoverView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const result = await login({ email: data.email, password: data.password });
+      const result = await login({ username: data.username, password: data.password });
       if (result.success) {
         reset();
-        enqueueSnackbar('Login successful!', { variant: 'success' });
+        enqueueSnackbar('Амжилттай нэвтэрлээ!', { variant: 'success' });
         router.push(paths.dashboard.root);
       } else {
-        enqueueSnackbar(result.error || 'Login failed', { variant: 'error' });
+        // Show better error messages with Mongolian support
+        const errorMessage = result.error || 'Нэвтрэхэд алдаа гарлаа';
+        enqueueSnackbar(errorMessage, {
+          variant: 'error',
+          autoHideDuration: 6000,
+        });
       }
     } catch (error) {
       console.error(error);
-      enqueueSnackbar('An unexpected error occurred', { variant: 'error' });
+      enqueueSnackbar('Гадаад алдаа гарлаа. Дахин оролдоно уу.', {
+        variant: 'error',
+        autoHideDuration: 6000,
+      });
     }
   });
 
@@ -79,13 +85,13 @@ export default function LoginCoverView() {
       }}
     >
       <Typography variant="h3" paragraph>
-        Login
+        Нэвтрэх
       </Typography>
 
       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-        {`Don’t have an account? `}
+        {`Бүртгэл байхгүй юу? `}
         <Link component={RouterLink} href={paths.registerCover} variant="subtitle2" color="primary">
-          Get started
+          Энд дарж бүртгүүлэх
         </Link>
       </Typography>
     </Stack>
@@ -110,11 +116,11 @@ export default function LoginCoverView() {
   const renderForm = (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Stack spacing={2.5} alignItems="flex-end">
-        <RHFTextField name="email" label="Email address" />
+        <RHFTextField name="username" label="Хэрэглэгчийн нэр" />
 
         <RHFTextField
           name="password"
-          label="Password"
+          label="Нууц үг"
           type={passwordShow.value ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
@@ -134,7 +140,7 @@ export default function LoginCoverView() {
           underline="always"
           color="text.secondary"
         >
-          Forgot password?
+          Нууц үг мартсан уу?
         </Link>
 
         <LoadingButton
@@ -145,7 +151,7 @@ export default function LoginCoverView() {
           variant="contained"
           loading={isSubmitting || isLoading}
         >
-          Login
+          Нэвтрэх
         </LoadingButton>
       </Stack>
     </FormProvider>

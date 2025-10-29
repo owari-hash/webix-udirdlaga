@@ -4,6 +4,7 @@ import React from 'react';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useRouter } from 'next/navigation';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -11,47 +12,94 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import MenuItem from '@mui/material/MenuItem';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import { RHFSelect } from 'src/components/hook-form/rhf-select';
+import { useSnackbar } from 'src/components/snackbar';
+import { BusinessType, CreateOrganizationData, Industry } from 'src/types/organization';
+import { organizationApi } from 'src/utils/organization-api';
 
 // ----------------------------------------------------------------------
 
 const AddOrganizationSchema = Yup.object().shape({
   name: Yup.string().required('Байгууллагын нэр шаардлагатай'),
+  displayName: Yup.string().required('Харагдах нэр шаардлагатай'),
   subdomain: Yup.string()
     .required('Дэд домэйн шаардлагатай')
-    .matches(/^[a-z0-9-]+$/, 'Зөвхөн жижиг үсэг, тоо, зураас зөвшөөрнө')
+    .matches(/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/, 'Зөвхөн жижиг үсэг, тоо, зураас зөвшөөрнө')
     .min(3, 'Хамгийн багадаа 3 тэмдэгт байх ёстой')
-    .max(20, 'Хамгийн ихдээ 20 тэмдэгт байх ёстой'),
+    .max(63, 'Хамгийн ихдээ 63 тэмдэгт байх ёстой'),
   phone: Yup.string().required('Утасны дугаар шаардлагатай'),
   email: Yup.string().email('Зөв имэйл хаяг оруулна уу').required('Имэйл шаардлагатай'),
-  website: Yup.string().url('Зөв вэб сайт хаяг оруулна уу'),
+  password: Yup.string().required('Нууц үг шаардлагатай'),
   description: Yup.string(),
+  registrationNumber: Yup.string().required('Бүртгэлийн дугаар шаардлагатай'),
+  businessType: Yup.string().required('Бизнесийн төрөл шаардлагатай'),
+  industry: Yup.string().required('Салбар шаардлагатай'),
+  address: Yup.object().shape({
+    street: Yup.string(),
+    city: Yup.string(),
+    state: Yup.string(),
+    postalCode: Yup.string(),
+    country: Yup.string().default('Mongolia'),
+  }),
 });
 
 const defaultValues = {
   name: '',
+  displayName: '',
   subdomain: '',
   phone: '',
   email: '',
-  website: '',
+  password: '',
   description: '',
+  registrationNumber: '',
+  businessType: 'publisher' as BusinessType,
+  industry: 'webtoon' as Industry,
+  address: {
+    street: '',
+    city: '',
+    state: '',
+    postalCode: '',
+    country: 'Mongolia',
+  },
 };
 
 // ----------------------------------------------------------------------
 
+const BUSINESS_TYPE_OPTIONS = [
+  { value: 'publisher', label: 'Хэвлэгч' },
+  { value: 'distributor', label: 'Түгээгч' },
+  { value: 'retailer', label: 'Жижиглэн худалдаачин' },
+  { value: 'library', label: 'Номын сан' },
+  { value: 'other', label: 'Бусад' },
+];
+
+const INDUSTRY_OPTIONS = [
+  { value: 'webtoon', label: 'Вебтуун' },
+  { value: 'manga', label: 'Манга' },
+  { value: 'comics', label: 'Комикс' },
+  { value: 'books', label: 'Ном' },
+  { value: 'media', label: 'Хэвлэл мэдээлэл' },
+  { value: 'education', label: 'Боловсрол' },
+  { value: 'other', label: 'Бусад' },
+];
+
 export default function OrganizationAddView() {
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
+
   const methods = useForm({
     resolver: yupResolver(AddOrganizationSchema),
     defaultValues,
   });
 
   const {
-    reset,
     handleSubmit,
     watch,
     setValue,
@@ -69,6 +117,7 @@ export default function OrganizationAddView() {
       .replace(/\s+/g, '-') // Replace spaces with hyphens
       .replace(/-+/g, '-') // Replace multiple hyphens with single
       .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+
   // Auto-generate subdomain when name changes
   React.useEffect(() => {
     if (watchedName && !watchedSubdomain) {
@@ -79,13 +128,44 @@ export default function OrganizationAddView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log('Organization data:', data);
-      reset();
-      // Here you would typically redirect to the organization list
-      // or show a success message
+      const organizationData: CreateOrganizationData = {
+        name: data.name,
+        displayName: data.displayName,
+        description: data.description,
+        email: [data.email],
+        phone: [data.phone],
+        password: data.password,
+        registrationNumber: data.registrationNumber,
+        address: {
+          street: data.address.street,
+          city: data.address.city,
+          state: data.address.state,
+          postalCode: data.address.postalCode,
+          country: data.address.country,
+          coordinates: {
+            type: 'Point',
+            coordinates: [0, 0], // Default coordinates
+          },
+        },
+        subdomain: data.subdomain,
+        businessType: data.businessType as BusinessType,
+        industry: data.industry as Industry,
+      };
+
+      const result = await organizationApi.createOrganization(organizationData);
+
+      enqueueSnackbar('Байгууллага амжилттай үүсгэгдлээ', { variant: 'success' });
+
+      // Show login credentials
+      enqueueSnackbar(
+        `Нэвтрэх мэдээлэл: ${result.loginCredentials.username} / ${result.loginCredentials.password}`,
+        { variant: 'info', autoHideDuration: 10000 }
+      );
+
+      router.push(paths.organization.root);
     } catch (error) {
-      console.error(error);
+      console.error('Failed to create organization:', error);
+      enqueueSnackbar('Байгууллага үүсгэхэд алдаа гарлаа', { variant: 'error' });
     }
   });
 
@@ -119,6 +199,7 @@ export default function OrganizationAddView() {
               }}
             >
               <RHFTextField name="name" label="Байгууллагын нэр" />
+              <RHFTextField name="displayName" label="Харагдах нэр" />
             </Box>
 
             <Box
@@ -151,7 +232,7 @@ export default function OrganizationAddView() {
                       }}
                     >
                       <Typography variant="body2" color="text.secondary">
-                        .webix.mn
+                        .localhost:8002
                       </Typography>
                     </Box>
                   ),
@@ -170,9 +251,65 @@ export default function OrganizationAddView() {
             >
               <RHFTextField name="phone" label="Утасны дугаар" />
               <RHFTextField name="email" label="И-мэйл" />
+              <RHFTextField name="password" label="Нууц үг" type="password" />
             </Box>
 
-            <RHFTextField name="website" label="Вэб сайт" />
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+              }}
+            >
+              <RHFTextField name="registrationNumber" label="Бүртгэлийн дугаар" />
+              <RHFSelect name="businessType" label="Бизнесийн төрөл">
+                {BUSINESS_TYPE_OPTIONS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+            </Box>
+
+            <RHFSelect name="industry" label="Салбар">
+              {INDUSTRY_OPTIONS.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </RHFSelect>
+
+            <Typography variant="h6">Хаягийн мэдээлэл</Typography>
+
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+              }}
+            >
+              <RHFTextField name="address.street" label="Гудамж" />
+              <RHFTextField name="address.city" label="Хот" />
+            </Box>
+
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+              }}
+            >
+              <RHFTextField name="address.state" label="Аймаг/Дүүрэг" />
+              <RHFTextField name="address.postalCode" label="Шуудангийн код" />
+            </Box>
+
+            <RHFTextField name="address.country" label="Улс" defaultValue="Mongolia" disabled />
 
             <RHFTextField
               name="description"
