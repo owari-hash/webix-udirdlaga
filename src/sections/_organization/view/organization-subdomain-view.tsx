@@ -16,7 +16,6 @@ type Props = {
 };
 
 export default function OrganizationSubdomainView({ organization }: Props) {
-
   const getStatusColor = (status: string) => {
     const colorMap = {
       active: 'success',

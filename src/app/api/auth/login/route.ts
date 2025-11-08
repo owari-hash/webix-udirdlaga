@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // External API configuration
-const EXTERNAL_API_URL = process.env.EXTERNAL_API_URL || 'http://localhost:3000';
+const EXTERNAL_API_URL = process.env.EXTERNAL_API_URL || 'https://udirdlaga.anzaidev.fun';
 
 // CORS headers
 const corsHeaders = {

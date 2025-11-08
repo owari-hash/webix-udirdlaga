@@ -1,7 +1,7 @@
 // API Configuration - Clean slate
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
-  EXTERNAL_API_URL: process.env.EXTERNAL_API_URL || 'http://localhost:3000',
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'https://udirdlaga.anzaidev.fun',
+  EXTERNAL_API_URL: process.env.EXTERNAL_API_URL || 'https://udirdlaga.anzaidev.fun',
   ENDPOINTS: {
     HEALTH: '/api/health',
     AUTH: {
