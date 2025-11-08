@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
-import { useTheme } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
@@ -17,7 +16,6 @@ type Props = {
 };
 
 export default function OrganizationSubdomainView({ organization }: Props) {
-  const theme = useTheme();
 
   const getStatusColor = (status: string) => {
     const colorMap = {

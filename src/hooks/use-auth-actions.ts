@@ -9,7 +9,7 @@ export function useAuthActions() {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleLogin = useCallback(
-    async (credentials: { email: string; password: string }) => {
+    async (credentials: { username: string; password: string }) => {
       try {
         const result = await login(credentials);
 

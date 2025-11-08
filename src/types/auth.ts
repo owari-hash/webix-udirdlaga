@@ -12,6 +12,8 @@ export type User = {
   email: string;
   role: 'super_admin' | 'org_admin' | 'org_moderator' | 'org_user' | 'viewer';
   lastLogin: string;
+  displayName?: string;
+  photoURL?: string;
 };
 
 export type LoginCredentials = {
