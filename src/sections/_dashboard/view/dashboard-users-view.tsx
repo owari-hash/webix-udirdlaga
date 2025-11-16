@@ -21,12 +21,11 @@ import { alpha, useTheme } from '@mui/material/styles';
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import { useAuth } from 'src/contexts/auth-context';
-import { organizationApi } from 'src/utils/organization-api';
-import { Organization, OrganizationListResponse } from 'src/types/organization';
-import { OrganizationUser, OrganizationUsersResponse } from 'src/types/organization-user';
-import AddOrgAdminDialog from './add-org-admin-dialog';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { apiClient } from 'src/utils/api-client';
+import { organizationApi } from 'src/utils/organization-api';
+import { Organization } from 'src/types/organization';
+import AddOrgAdminDialog from './add-org-admin-dialog';
 
 // ----------------------------------------------------------------------
 
@@ -57,7 +56,8 @@ const MOCK_SYSTEM_USERS: UserType[] = [
   },
 ];
 
-// Organization Users (org_user, org_moderator)
+// Organization Users (org_user, org_moderator) - Kept for reference
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const MOCK_ORG_USERS: UserType[] = [
   {
     id: 2,
@@ -113,7 +113,8 @@ const MOCK_ORG_USERS: UserType[] = [
   },
 ];
 
-// Organization Admin Users
+// Organization Admin Users - Kept for reference
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const MOCK_ORG_ADMIN_USERS: UserType[] = [
   {
     id: 6,
@@ -268,7 +269,18 @@ export default function DashboardUsersView() {
       // backendData from backend is: { users: [], organization: {}, pagination: {} }
       // So response.data should be: { users: [], organization: {}, pagination: {} }
       
-      let usersData = null;
+      type UsersData = {
+        users?: any[];
+        organization?: {
+          id?: string;
+          _id?: string;
+          name?: string;
+          subdomain?: string;
+        };
+        pagination?: any;
+      };
+      
+      let usersData: UsersData | null = null;
       
       if (response) {
         console.log('Response structure check:', {
@@ -282,10 +294,10 @@ export default function DashboardUsersView() {
         // The apiClient.get returns the full response object
         // response.data contains the backend's data object
         if (response.data) {
-          usersData = response.data;
+          usersData = response.data as UsersData;
         } else if (response.success !== false) {
           // Fallback: if no response.data, maybe the data is directly in response
-          usersData = response;
+          usersData = response as UsersData;
         }
       }
       
@@ -304,15 +316,30 @@ export default function DashboardUsersView() {
           console.log('Filtered to admin users:', usersToMap.length);
         }
         
-        const mappedUsers = usersToMap.map((user: any) => {
-          const mapped = {
+        const mappedUsers: UserType[] = usersToMap.map((user: any) => {
+          const roleMap: Record<string, UserType['role']> = {
+            admin: 'org_admin',
+            moderator: 'org_moderator',
+            user: 'org_user',
+            super_admin: 'super_admin',
+            viewer: 'viewer',
+          };
+
+          const statusMap: Record<string, UserType['status']> = {
+            active: 'active',
+            inactive: 'inactive',
+            suspended: 'suspended',
+            banned: 'suspended',
+          };
+
+          const mapped: UserType = {
             id: user._id || user.id,
             name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username || 'Нэргүй',
             email: user.email || '',
             organization: usersData.organization?.name || usersData.organization?.subdomain || '',
             organizationId: usersData.organization?.id || usersData.organization?._id || selectedOrgId,
-            role: user.role === 'admin' ? 'org_admin' : user.role === 'moderator' ? 'org_moderator' : 'org_user',
-            status: user.status === 'banned' ? 'suspended' : (user.status || 'active'),
+            role: roleMap[user.role] || 'org_user',
+            status: statusMap[user.status] || 'active',
             lastLogin: user.lastLogin || user.lastActivity || user.createdAt || user.updatedAt || '',
           };
           console.log('Mapping user:', user, '->', mapped);
@@ -457,10 +484,16 @@ export default function DashboardUsersView() {
     try {
       const response = await organizationApi.addUserToOrganization(selectedOrgId, data);
       
-      if (response.success) {
+      // Handle response - organizationApi.addUserToOrganization returns response.data
+      // which should be the backend response: { success: true, message: "...", data: {...} }
+      const responseData = response as { success?: boolean; data?: any; message?: string };
+      
+      if (responseData && (responseData.success === true || responseData.data)) {
         enqueueSnackbar('Админ хэрэглэгч амжилттай нэмэгдлээ', { variant: 'success' });
         // Refresh the list
         await fetchOrganizationUsers();
+      } else {
+        enqueueSnackbar(responseData?.message || 'Админ нэмэхэд алдаа гарлаа', { variant: 'error' });
       }
     } catch (error) {
       console.error('Error adding org admin:', error);

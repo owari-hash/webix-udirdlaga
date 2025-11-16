@@ -29,13 +29,9 @@ class ApiClient {
   private tokens: AuthTokens | null = null;
 
   // Get base URL dynamically based on current tenant
+  // eslint-disable-next-line class-methods-use-this
   private getBaseURL(): string {
     return API_CONFIG.BASE_URL;
-  }
-
-  constructor() {
-    // No longer need to pass baseURL in constructor
-    // It's now determined dynamically based on tenant
   }
 
   setTokens(tokens: AuthTokens | null) {
