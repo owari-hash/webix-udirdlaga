@@ -26,12 +26,16 @@ type BackendResponse<T = any> = {
 // ----------------------------------------------------------------------
 
 class ApiClient {
-  private baseURL: string;
-
   private tokens: AuthTokens | null = null;
 
-  constructor(baseURL: string = '/api') {
-    this.baseURL = baseURL;
+  // Get base URL dynamically based on current tenant
+  private getBaseURL(): string {
+    return API_CONFIG.BASE_URL;
+  }
+
+  constructor() {
+    // No longer need to pass baseURL in constructor
+    // It's now determined dynamically based on tenant
   }
 
   setTokens(tokens: AuthTokens | null) {
@@ -44,7 +48,9 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const { method = 'GET', headers = {}, body, requireAuth = true } = options;
 
-    const url = `${this.baseURL}${endpoint}`;
+    // Get base URL dynamically based on current tenant
+    const baseURL = this.getBaseURL();
+    const url = `${baseURL}${endpoint}`;
 
     const requestHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -121,7 +127,8 @@ class ApiClient {
 }
 
 // Create a singleton instance
-export const apiClient = new ApiClient(API_CONFIG.BASE_URL);
+// Base URL is now determined dynamically based on tenant
+export const apiClient = new ApiClient();
 
 // ----------------------------------------------------------------------
 

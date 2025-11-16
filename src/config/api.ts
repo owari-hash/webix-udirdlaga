@@ -1,7 +1,14 @@
+import { getTenantApiUrl } from './tenants';
+
 // API Configuration - Clean slate
+// Uses tenant-based configuration for multi-database support
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'https://udirdlaga.anzaidev.fun',
-  EXTERNAL_API_URL: process.env.EXTERNAL_API_URL || 'https://udirdlaga.anzaidev.fun',
+  get BASE_URL() {
+    return process.env.NEXT_PUBLIC_API_URL || getTenantApiUrl();
+  },
+  get EXTERNAL_API_URL() {
+    return process.env.EXTERNAL_API_URL || getTenantApiUrl();
+  },
   ENDPOINTS: {
     HEALTH: '/api/health',
     AUTH: {

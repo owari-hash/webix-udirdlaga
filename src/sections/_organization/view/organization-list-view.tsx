@@ -200,13 +200,13 @@ export default function OrganizationListView() {
                               {row.subdomain}
                             </Typography>
                             <Typography variant="body2" color="text.secondary" sx={{ ml: 0.5 }}>
-                              .localhost:8002
+                              .anzaidev.fun
                             </Typography>
                           </Box>
                           <IconButton
                             size="small"
                             onClick={() => {
-                              navigator.clipboard.writeText(`${row.subdomain}.localhost:8002`);
+                              navigator.clipboard.writeText(`${row.subdomain}..anzaidev.fun`);
                               enqueueSnackbar('Дэд домэйн хуулагдлаа', { variant: 'success' });
                             }}
                           >
@@ -256,7 +256,7 @@ export default function OrganizationListView() {
                             size="small"
                             color="info"
                             onClick={() =>
-                              window.open(`http://${row.subdomain}.localhost:8002`, '_blank')
+                              window.open(`http://${row.subdomain}.anzaidev.fun`, '_blank')
                             }
                             title="Дэд домэйн нээх"
                           >

@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getTenantByDomain, getApiUrlFromSubdomain } from 'src/config/tenants';
 
-// External API configuration
-const EXTERNAL_API_URL = process.env.EXTERNAL_API_URL || 'https://udirdlaga.anzaidev.fun';
+// Get external API URL based on tenant
+function getExternalApiUrl(request: NextRequest): string {
+  const hostname = request.headers.get('host') || '';
+  const tenant = getTenantByDomain(hostname);
+  return process.env.EXTERNAL_API_URL || getApiUrlFromSubdomain(tenant.subdomain);
+}
 
 // CORS headers
 const corsHeaders = {
@@ -37,8 +42,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get tenant-specific API URL
+    const externalApiUrl = getExternalApiUrl(request);
+
     // Call external API for authentication
-    const response = await fetch(`${EXTERNAL_API_URL}/api/auth/login`, {
+    const response = await fetch(`${externalApiUrl}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

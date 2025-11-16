@@ -72,7 +72,7 @@ export default function OrganizationSubdomainView({ organization }: Props) {
               <Typography variant="body2" color="text.secondary">
                 Дэд домэйн
               </Typography>
-              <Typography variant="body1">{organization.subdomain}.localhost:8002</Typography>
+              <Typography variant="body1">{organization.subdomain}.anzaidev.fun</Typography>
             </Box>
 
             {organization.description && (

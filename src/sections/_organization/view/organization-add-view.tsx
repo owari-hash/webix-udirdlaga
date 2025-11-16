@@ -232,7 +232,7 @@ export default function OrganizationAddView() {
                       }}
                     >
                       <Typography variant="body2" color="text.secondary">
-                        .localhost:8002
+                        .anzaidev.fun
                       </Typography>
                     </Box>
                   ),
