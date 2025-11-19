@@ -52,26 +52,169 @@ export const organizationApi = {
 
   // Get organization by ID
   async getOrganization(id: string): Promise<Organization> {
-    const response = await apiClient.get<Organization>(
+    const response = await apiClient.get<{ organization: Organization } | Organization>(
       `${API_CONFIG.ENDPOINTS.ORGANIZATIONS.GET}/${id}`
     );
-    return response.data;
+    // Handle both response structures: {organization: {...}} or direct organization object
+    const data = response.data as any;
+    return data.organization || data;
   },
 
   // Create new organization
   async createOrganization(data: CreateOrganizationData): Promise<OrganizationCreationResponse> {
+    // If logo is a File, use FormData, otherwise use JSON
+    if (data.logo instanceof File) {
+      const formData = new FormData();
+
+      // Add logo file (multer expects field name 'logo')
+      formData.append('logo', data.logo);
+
+      // Add other fields
+      formData.append('name', data.name);
+      formData.append('displayName', data.displayName);
+      if (data.description) formData.append('description', data.description);
+
+      // Add email array - send as repeated fields for proper parsing
+      data.email.forEach((email) => {
+        formData.append('email', email);
+      });
+
+      // Add phone array - send as repeated fields for proper parsing
+      data.phone.forEach((phone) => {
+        formData.append('phone', phone);
+      });
+
+      formData.append('registrationNumber', data.registrationNumber);
+      if (data.taxId) formData.append('taxId', data.taxId);
+
+      // Add address as JSON string
+      if (data.address) {
+        formData.append('address', JSON.stringify(data.address));
+      }
+
+      formData.append('subdomain', data.subdomain);
+      if (data.customDomain) formData.append('customDomain', data.customDomain);
+      formData.append('businessType', data.businessType);
+      formData.append('industry', data.industry);
+
+      // Add adminUser if password is provided (as nested FormData fields)
+      if (data.password) {
+        formData.append('adminUser[firstName]', 'Admin');
+        formData.append('adminUser[lastName]', 'User');
+        formData.append('adminUser[email]', data.email[0] || '');
+        formData.append('adminUser[password]', data.password);
+      }
+
+      if (data.subscription) {
+        formData.append('subscription', JSON.stringify(data.subscription));
+      }
+
+      if (data.settings) {
+        formData.append('settings', JSON.stringify(data.settings));
+      }
+
+      const response = await apiClient.post<OrganizationCreationResponse>(
+        API_CONFIG.ENDPOINTS.ORGANIZATIONS.CREATE,
+        formData
+      );
+      return response.data;
+    }
+
+    // For JSON requests, also add adminUser if password is provided
+    const requestData: any = { ...data };
+    if (data.password && !requestData.adminUser) {
+      requestData.adminUser = {
+        firstName: 'Admin',
+        lastName: 'User',
+        email: data.email[0] || '',
+        password: data.password,
+      };
+      // Remove password from top level as it should be in adminUser
+      delete requestData.password;
+    }
+
     const response = await apiClient.post<OrganizationCreationResponse>(
       API_CONFIG.ENDPOINTS.ORGANIZATIONS.CREATE,
-      data
+      requestData
     );
     return response.data;
   },
 
   // Update organization
   async updateOrganization(id: string, data: UpdateOrganizationData): Promise<Organization> {
+    // If logo is a File, use FormData, otherwise use JSON
+    if (data.logo instanceof File) {
+      const formData = new FormData();
+
+      // Add logo file (multer expects field name 'logo')
+      formData.append('logo', data.logo);
+
+      // Add other fields
+      if (data.name) formData.append('name', data.name);
+      if (data.displayName) formData.append('displayName', data.displayName);
+      if (data.description !== undefined) formData.append('description', data.description || '');
+
+      // Add email array - send as repeated fields for proper parsing
+      if (data.email) {
+        data.email.forEach((email) => {
+          formData.append('email', email);
+        });
+      }
+
+      // Add phone array - send as repeated fields for proper parsing
+      if (data.phone) {
+        data.phone.forEach((phone) => {
+          formData.append('phone', phone);
+        });
+      }
+
+      if (data.registrationNumber) formData.append('registrationNumber', data.registrationNumber);
+      if (data.taxId) formData.append('taxId', data.taxId);
+
+      // Add address as JSON string
+      if (data.address) {
+        formData.append('address', JSON.stringify(data.address));
+      }
+
+      if (data.subdomain) formData.append('subdomain', data.subdomain);
+      if (data.customDomain) formData.append('customDomain', data.customDomain);
+      if (data.businessType) formData.append('businessType', data.businessType);
+      if (data.industry) formData.append('industry', data.industry);
+
+      if (data.status) formData.append('status', data.status);
+      if (data.isVerified !== undefined) formData.append('isVerified', String(data.isVerified));
+
+      if (data.subscription) {
+        formData.append('subscription', JSON.stringify(data.subscription));
+      }
+
+      if (data.settings) {
+        formData.append('settings', JSON.stringify(data.settings));
+      }
+
+      const response = await apiClient.put<Organization>(
+        `${API_CONFIG.ENDPOINTS.ORGANIZATIONS.UPDATE}/${id}`,
+        formData
+      );
+      return response.data;
+    }
+
+    // For JSON requests, include logo if it's a string (existing URL)
+    // If logo is null/undefined, don't send it (to keep existing logo)
+    // If logo is a string, send it to update the logo URL
+    const requestData: any = { ...data };
+
+    // Only include logo in request if it's explicitly provided (string or null)
+    // If logo is undefined, remove it from the request to keep existing logo
+    if (data.logo === null || (typeof data.logo === 'string' && data.logo !== '')) {
+      requestData.logo = data.logo;
+    } else if (data.logo === undefined) {
+      delete requestData.logo;
+    }
+
     const response = await apiClient.put<Organization>(
       `${API_CONFIG.ENDPOINTS.ORGANIZATIONS.UPDATE}/${id}`,
-      data
+      requestData
     );
     return response.data;
   },

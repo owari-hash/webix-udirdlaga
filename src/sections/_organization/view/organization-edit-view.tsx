@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -14,6 +14,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import LoadingButton from '@mui/lab/LoadingButton';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
@@ -21,12 +22,13 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import FormProvider, { RHFTextField, RHFUpload } from 'src/components/hook-form';
 import { RHFSelect } from 'src/components/hook-form/rhf-select';
 import { useSnackbar } from 'src/components/snackbar';
-import { BusinessType, CreateOrganizationData, Industry } from 'src/types/organization';
+import { BusinessType, UpdateOrganizationData, Industry, Organization } from 'src/types/organization';
 import { organizationApi } from 'src/utils/organization-api';
+import { API_CONFIG } from 'src/config/api';
 
 // ----------------------------------------------------------------------
 
-const AddOrganizationSchema = Yup.object().shape({
+const EditOrganizationSchema = Yup.object().shape({
   name: Yup.string().required('Байгууллагын нэр шаардлагатай'),
   displayName: Yup.string().required('Харагдах нэр шаардлагатай'),
   subdomain: Yup.string()
@@ -36,7 +38,6 @@ const AddOrganizationSchema = Yup.object().shape({
     .max(63, 'Хамгийн ихдээ 63 тэмдэгт байх ёстой'),
   phone: Yup.string().required('Утасны дугаар шаардлагатай'),
   email: Yup.string().email('Зөв имэйл хаяг оруулна уу').required('Имэйл шаардлагатай'),
-  password: Yup.string().required('Нууц үг шаардлагатай'),
   description: Yup.string(),
   registrationNumber: Yup.string().required('Бүртгэлийн дугаар шаардлагатай'),
   businessType: Yup.string().required('Бизнесийн төрөл шаардлагатай'),
@@ -50,27 +51,6 @@ const AddOrganizationSchema = Yup.object().shape({
     country: Yup.string().default('Mongolia'),
   }),
 });
-
-const defaultValues = {
-  name: '',
-  displayName: '',
-  subdomain: '',
-  phone: '',
-  email: '',
-  password: '',
-  description: '',
-  registrationNumber: '',
-  businessType: 'publisher' as BusinessType,
-  industry: 'webtoon' as Industry,
-  logo: null,
-  address: {
-    street: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    country: 'Mongolia',
-  },
-};
 
 // ----------------------------------------------------------------------
 
@@ -92,52 +72,128 @@ const INDUSTRY_OPTIONS = [
   { value: 'other', label: 'Бусад' },
 ];
 
-export default function OrganizationAddView() {
+const defaultValues = {
+  name: '',
+  displayName: '',
+  subdomain: '',
+  phone: '',
+  email: '',
+  description: '',
+  registrationNumber: '',
+  businessType: 'publisher' as BusinessType,
+  industry: 'webtoon' as Industry,
+  logo: null,
+  address: {
+    street: '',
+    city: '',
+    state: '',
+    postalCode: '',
+    country: 'Mongolia',
+  },
+};
+
+export default function OrganizationEditView() {
   const router = useRouter();
+  const params = useParams();
   const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(true);
+  const [organization, setOrganization] = useState<Organization | null>(null);
+  const [formReady, setFormReady] = useState(false);
+
+  const organizationId = params?.id as string;
 
   const methods = useForm({
-    resolver: yupResolver(AddOrganizationSchema),
+    resolver: yupResolver(EditOrganizationSchema),
     defaultValues,
   });
 
   const {
     handleSubmit,
-    watch,
-    setValue,
+    reset,
     formState: { isSubmitting },
   } = methods;
 
-  const watchedName = watch('name');
-  const watchedSubdomain = watch('subdomain');
+  // Load organization data
+  useEffect(() => {
+    const loadOrganization = async () => {
+      if (!organizationId) {
+        enqueueSnackbar('Байгууллагын ID олдсонгүй', { variant: 'error' });
+        router.push(paths.organization.root);
+        return;
+      }
 
-  // Generate subdomain from organization name
-  const generateSubdomain = (name: string) =>
-    name
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '') // Remove special characters
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single
-      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+      try {
+        setLoading(true);
+        const response = await organizationApi.getOrganization(organizationId);
+        
+        console.log('Loaded organization response:', response);
+        
+        // Extract organization from response - handle both {organization: {...}} and direct organization object
+        const org = (response as any).organization || response;
+        setOrganization(org);
 
-  // Auto-generate subdomain when name changes
-  React.useEffect(() => {
-    if (watchedName && !watchedSubdomain) {
-      const generated = generateSubdomain(watchedName);
-      setValue('subdomain', generated);
-    }
-  }, [watchedName, watchedSubdomain, setValue]);
+        console.log('Extracted organization:', org);
+
+        // Construct full logo URL if it's a relative path
+        let logoUrl = org.logo || null;
+        if (logoUrl && typeof logoUrl === 'string' && logoUrl.startsWith('/') && !logoUrl.startsWith('//')) {
+          const baseUrl = API_CONFIG.BASE_URL;
+          logoUrl = `${baseUrl}${logoUrl}`;
+        }
+
+        // Pre-populate form with existing data
+        const formData = {
+          name: org.name || '',
+          displayName: org.displayName || '',
+          subdomain: org.subdomain || '',
+          phone: org.phone?.[0] || '',
+          email: org.email?.[0] || '',
+          description: org.description || '',
+          registrationNumber: org.registrationNumber || '',
+          businessType: (org.businessType || 'publisher') as BusinessType,
+          industry: (org.industry || 'webtoon') as Industry,
+          logo: logoUrl,
+          address: {
+            street: org.address?.street || '',
+            city: org.address?.city || '',
+            state: org.address?.state || '',
+            postalCode: org.address?.postalCode || '',
+            country: org.address?.country || 'Mongolia',
+          },
+        };
+
+        console.log('Form data to reset:', formData);
+        
+        // Use reset with shouldValidate: false to avoid validation errors during load
+        reset(formData, { keepDefaultValues: false });
+        
+        // Mark form as ready after a brief delay to ensure reset completes
+        setTimeout(() => {
+          setFormReady(true);
+        }, 100);
+      } catch (error) {
+        console.error('Failed to load organization:', error);
+        enqueueSnackbar('Байгууллагын мэдээлэл ачаалахад алдаа гарлаа', { variant: 'error' });
+        router.push(paths.organization.root);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOrganization();
+  }, [organizationId, reset, router, enqueueSnackbar]);
 
   const onSubmit = handleSubmit(async (data) => {
+    if (!organizationId) return;
+
     try {
-      const organizationData: CreateOrganizationData = {
+      const updateData: UpdateOrganizationData = {
         name: data.name,
         displayName: data.displayName,
         description: data.description,
-        logo: data.logo || undefined,
+        logo: data.logo, // Can be File, string (URL), or null
         email: [data.email],
         phone: [data.phone],
-        password: data.password,
         registrationNumber: data.registrationNumber,
         address: {
           street: data.address.street,
@@ -145,9 +201,9 @@ export default function OrganizationAddView() {
           state: data.address.state,
           postalCode: data.address.postalCode,
           country: data.address.country,
-          coordinates: {
+          coordinates: organization?.address?.coordinates || {
             type: 'Point',
-            coordinates: [0, 0], // Default coordinates
+            coordinates: [0, 0],
           },
         },
         subdomain: data.subdomain,
@@ -155,22 +211,26 @@ export default function OrganizationAddView() {
         industry: data.industry as Industry,
       };
 
-      const result = await organizationApi.createOrganization(organizationData);
+      await organizationApi.updateOrganization(organizationId, updateData);
 
-      enqueueSnackbar('Байгууллага амжилттай үүсгэгдлээ', { variant: 'success' });
-
-      // Show login credentials
-      enqueueSnackbar(
-        `Нэвтрэх мэдээлэл: ${result.loginCredentials.username} / ${result.loginCredentials.password}`,
-        { variant: 'info', autoHideDuration: 10000 }
-      );
+      enqueueSnackbar('Байгууллага амжилттай шинэчлэгдлээ', { variant: 'success' });
 
       router.push(paths.organization.root);
     } catch (error) {
-      console.error('Failed to create organization:', error);
-      enqueueSnackbar('Байгууллага үүсгэхэд алдаа гарлаа', { variant: 'error' });
+      console.error('Failed to update organization:', error);
+      enqueueSnackbar('Байгууллага шинэчлэхэд алдаа гарлаа', { variant: 'error' });
     }
   });
+
+  if (loading || !organization || !formReady) {
+    return (
+      <Container maxWidth="lg">
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth="lg">
@@ -179,12 +239,12 @@ export default function OrganizationAddView() {
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Байгууллага', href: paths.organization.root },
-          { name: 'Шинэ байгууллага нэмэх' },
+          { name: 'Байгууллага засах' },
         ]}
       />
 
       <Typography variant="h4" sx={{ mb: 5 }}>
-        Шинэ байгууллага нэмэх
+        Байгууллага засах
       </Typography>
 
       <Card sx={{ p: 3 }}>
@@ -260,7 +320,6 @@ export default function OrganizationAddView() {
             >
               <RHFTextField name="phone" label="Утасны дугаар" />
               <RHFTextField name="email" label="И-мэйл" />
-              <RHFTextField name="password" label="Нууц үг" type="password" />
             </Box>
 
             <Box
@@ -348,3 +407,4 @@ export default function OrganizationAddView() {
     </Container>
   );
 }
+

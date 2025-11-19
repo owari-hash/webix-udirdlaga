@@ -48,10 +48,16 @@ class ApiClient {
     const baseURL = this.getBaseURL();
     const url = `${baseURL}${endpoint}`;
 
+    const isFormData = body instanceof FormData;
+
     const requestHeaders: Record<string, string> = {
-      'Content-Type': 'application/json',
       ...headers,
     };
+
+    // Only set Content-Type for JSON, FormData will set it automatically with boundary
+    if (!isFormData) {
+      requestHeaders['Content-Type'] = 'application/json';
+    }
 
     // Add authorization header if tokens are available and auth is required
     if (requireAuth && this.tokens?.accessToken) {
@@ -62,7 +68,7 @@ class ApiClient {
       const response = await fetch(url, {
         method,
         headers: requestHeaders,
-        body: body ? JSON.stringify(body) : undefined,
+        body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
       });
 
       const backendResponse: BackendResponse<T> = await response.json();

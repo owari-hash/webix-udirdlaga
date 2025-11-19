@@ -83,6 +83,7 @@ export interface Organization {
   name: string;
   displayName: string;
   description?: string;
+  logo?: string;
 
   // Contact Information
   email: string[];
@@ -136,6 +137,7 @@ export interface CreateOrganizationData {
   name: string;
   displayName: string;
   description?: string;
+  logo?: string | File;
   email: string[];
   phone: string[];
   password: string;

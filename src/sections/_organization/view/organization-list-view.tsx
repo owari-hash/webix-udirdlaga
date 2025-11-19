@@ -40,7 +40,6 @@ export default function OrganizationListView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const openEditDialog = useBoolean();
   const openDeleteDialog = useBoolean();
 
   // Load organizations on component mount
@@ -270,9 +269,8 @@ export default function OrganizationListView() {
                           <IconButton
                             size="small"
                             color="warning"
-                            onClick={() => {
-                              openEditDialog.onTrue();
-                            }}
+                            component={RouterLink}
+                            href={`${paths.organization.edit}/${row._id}`}
                           >
                             <Iconify icon="solar:pen-bold" />
                           </IconButton>
