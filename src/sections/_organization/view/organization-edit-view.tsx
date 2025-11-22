@@ -22,7 +22,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import FormProvider, { RHFTextField, RHFUpload } from 'src/components/hook-form';
 import { RHFSelect } from 'src/components/hook-form/rhf-select';
 import { useSnackbar } from 'src/components/snackbar';
-import { BusinessType, UpdateOrganizationData, Industry, Organization } from 'src/types/organization';
+import { BusinessType, UpdateOrganizationData, Industry, Organization, SubscriptionPlan, SubscriptionStatus } from 'src/types/organization';
 import { organizationApi } from 'src/utils/organization-api';
 import { API_CONFIG } from 'src/config/api';
 
@@ -50,6 +50,11 @@ const EditOrganizationSchema = Yup.object().shape({
     postalCode: Yup.string(),
     country: Yup.string().default('Mongolia'),
   }),
+  subscription: Yup.object().shape({
+    plan: Yup.string().required('Төлөвлөгөө шаардлагатай'),
+    status: Yup.string().required('Төлөв шаардлагатай'),
+    endDate: Yup.string().nullable(),
+  }),
 });
 
 // ----------------------------------------------------------------------
@@ -72,6 +77,20 @@ const INDUSTRY_OPTIONS = [
   { value: 'other', label: 'Бусад' },
 ];
 
+const SUBSCRIPTION_PLAN_OPTIONS = [
+  { value: 'free', label: 'Үнэгүй' },
+  { value: 'basic', label: 'Энгийн' },
+  { value: 'premium', label: 'Премиум' },
+  { value: 'enterprise', label: 'Байгууллага' },
+];
+
+const SUBSCRIPTION_STATUS_OPTIONS = [
+  { value: 'active', label: 'Идэвхтэй' },
+  { value: 'inactive', label: 'Идэвхгүй' },
+  { value: 'suspended', label: 'Түдгэлзүүлсэн' },
+  { value: 'cancelled', label: 'Цуцалсан' },
+];
+
 const defaultValues = {
   name: '',
   displayName: '',
@@ -89,6 +108,11 @@ const defaultValues = {
     state: '',
     postalCode: '',
     country: 'Mongolia',
+  },
+  subscription: {
+    plan: 'free' as SubscriptionPlan,
+    status: 'active' as SubscriptionStatus,
+    endDate: '',
   },
 };
 
@@ -160,6 +184,11 @@ export default function OrganizationEditView() {
             postalCode: org.address?.postalCode || '',
             country: org.address?.country || 'Mongolia',
           },
+          subscription: {
+            plan: (org.subscription?.plan || 'free') as SubscriptionPlan,
+            status: (org.subscription?.status || 'active') as SubscriptionStatus,
+            endDate: org.subscription?.endDate ? new Date(org.subscription.endDate).toISOString().split('T')[0] : '',
+          },
         };
 
         console.log('Form data to reset:', formData);
@@ -209,6 +238,13 @@ export default function OrganizationEditView() {
         subdomain: data.subdomain,
         businessType: data.businessType as BusinessType,
         industry: data.industry as Industry,
+        subscription: {
+          plan: data.subscription.plan as SubscriptionPlan,
+          status: data.subscription.status as SubscriptionStatus,
+          startDate: organization?.subscription?.startDate || new Date().toISOString(),
+          endDate: data.subscription.endDate ? new Date(data.subscription.endDate).toISOString() : undefined,
+          autoRenew: organization?.subscription?.autoRenew ?? true,
+        },
       };
 
       await organizationApi.updateOrganization(organizationId, updateData);
@@ -348,6 +384,41 @@ export default function OrganizationEditView() {
                 </MenuItem>
               ))}
             </RHFSelect>
+
+            <Typography variant="h6">Лиценз ба Төлөвлөгөө</Typography>
+
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+              }}
+            >
+              <RHFSelect name="subscription.plan" label="Төлөвлөгөө">
+                {SUBSCRIPTION_PLAN_OPTIONS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+
+              <RHFSelect name="subscription.status" label="Төлөв">
+                {SUBSCRIPTION_STATUS_OPTIONS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+
+              <RHFTextField
+                name="subscription.endDate"
+                label="Дуусах хугацаа"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+              />
+            </Box>
 
             <Typography variant="h6">Хаягийн мэдээлэл</Typography>
 

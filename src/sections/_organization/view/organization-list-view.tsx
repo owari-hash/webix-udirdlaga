@@ -26,7 +26,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { useSnackbar } from 'src/components/snackbar';
 import { organizationApi } from 'src/utils/organization-api';
-import { Organization, OrganizationStatus } from 'src/types/organization';
+import { Organization, OrganizationStatus, SubscriptionStatus } from 'src/types/organization';
 
 // ----------------------------------------------------------------------
 
@@ -78,6 +78,44 @@ export default function OrganizationListView() {
     } catch (err) {
       console.error('Failed to update organization status:', err);
       enqueueSnackbar('Төлөв шинэчлэхэд алдаа гарлаа', { variant: 'error' });
+    }
+  };
+
+  const handleExtendLicense = async (id: string) => {
+    try {
+      const org = organizations.find((o) => o._id === id);
+      if (!org) return;
+
+      const currentEndDate = org.subscription?.endDate ? new Date(org.subscription.endDate) : new Date();
+      // If expired, start from now. If active, add to existing end date.
+      const baseDate = currentEndDate < new Date() ? new Date() : currentEndDate;
+      
+      const newEndDate = new Date(baseDate);
+      newEndDate.setDate(newEndDate.getDate() + 30);
+
+      const updateData = {
+        subscription: {
+          ...org.subscription,
+          status: 'active' as SubscriptionStatus, // Reactivate if inactive
+          endDate: newEndDate.toISOString(),
+        }
+      };
+
+      await organizationApi.updateOrganization(id, updateData);
+
+      setOrganizations(organizations.map((o) => (o._id === id ? { 
+        ...o, 
+        subscription: { 
+          ...o.subscription, 
+          status: 'active', 
+          endDate: newEndDate.toISOString() 
+        } 
+      } : o)));
+
+      enqueueSnackbar('Лиценз 30 хоногоор сунгагдлаа', { variant: 'success' });
+    } catch (err) {
+      console.error('Failed to extend license:', err);
+      enqueueSnackbar('Лиценз сунгахад алдаа гарлаа', { variant: 'error' });
     }
   };
 
@@ -165,6 +203,7 @@ export default function OrganizationListView() {
                   <TableCell>Дэд домэйн</TableCell>
                   <TableCell>Утас</TableCell>
                   <TableCell>И-мэйл</TableCell>
+                  <TableCell>Лиценз дуусах</TableCell>
                   <TableCell>Төлөв</TableCell>
                   <TableCell>Үүсгэсэн огноо</TableCell>
                   <TableCell align="right">Үйлдэл</TableCell>
@@ -219,6 +258,22 @@ export default function OrganizationListView() {
                       <TableCell>{row.email?.[0] || '-'}</TableCell>
 
                       <TableCell>
+                        <Typography 
+                          variant="body2" 
+                          color={
+                            row.subscription?.endDate && new Date(row.subscription.endDate) < new Date() 
+                              ? 'error.main' 
+                              : 'success.main'
+                          }
+                          fontWeight="bold"
+                        >
+                          {row.subscription?.endDate 
+                            ? new Date(row.subscription.endDate).toLocaleDateString('mn-MN') 
+                            : 'Хугацаагүй'}
+                        </Typography>
+                      </TableCell>
+
+                      <TableCell>
                         <Box
                           sx={{
                             display: 'inline-flex',
@@ -261,6 +316,17 @@ export default function OrganizationListView() {
                           >
                             <Iconify icon="solar:link-bold" />
                           </IconButton>
+
+                          <Button
+                            size="small"
+                            variant="soft"
+                            color="success"
+                            startIcon={<Iconify icon="solar:calendar-add-bold" />}
+                            onClick={() => handleExtendLicense(row._id)}
+                            sx={{ px: 1, minWidth: 'auto' }}
+                          >
+                            +30
+                          </Button>
 
                           <IconButton size="small" color="primary">
                             <Iconify icon="solar:eye-bold" />
