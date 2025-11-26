@@ -27,6 +27,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { useSnackbar } from 'src/components/snackbar';
 import { organizationApi } from 'src/utils/organization-api';
 import { Organization, OrganizationStatus, SubscriptionStatus } from 'src/types/organization';
+import QPayRegisterDialog from './qpay-register-dialog';
 
 // ----------------------------------------------------------------------
 
@@ -41,6 +42,8 @@ export default function OrganizationListView() {
   const [error, setError] = useState<string | null>(null);
 
   const openDeleteDialog = useBoolean();
+  const openQPayDialog = useBoolean();
+  const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
 
   // Load organizations on component mount
   useEffect(() => {
@@ -328,6 +331,18 @@ export default function OrganizationListView() {
                             +30
                           </Button>
 
+                          <IconButton
+                            size="small"
+                            color="secondary"
+                            onClick={() => {
+                              setSelectedOrgId(row._id);
+                              openQPayDialog.onTrue();
+                            }}
+                            title="QPay бүртгэл"
+                          >
+                            <Iconify icon="solar:wallet-money-bold" />
+                          </IconButton>
+
                           <IconButton size="small" color="primary">
                             <Iconify icon="solar:eye-bold" />
                           </IconButton>
@@ -385,6 +400,30 @@ export default function OrganizationListView() {
       {/* Edit Organization Dialog */}
       {/* Delete Confirmation Dialog */}
       {/* View Organization Dialog */}
+
+      {/* QPay Register Dialog */}
+      {selectedOrgId && (
+        <QPayRegisterDialog
+          open={openQPayDialog.value}
+          onClose={() => {
+            openQPayDialog.onFalse();
+            setSelectedOrgId(null);
+          }}
+          orgId={selectedOrgId}
+          onSuccess={() => {
+            // Optionally refresh organizations list
+            const loadOrganizations = async () => {
+              try {
+                const data = await organizationApi.getOrganizations();
+                setOrganizations(data.organizations);
+              } catch (err) {
+                console.error('Failed to load organizations:', err);
+              }
+            };
+            loadOrganizations();
+          }}
+        />
+      )}
     </Container>
   );
 }

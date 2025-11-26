@@ -334,4 +334,74 @@ export const organizationApi = {
   async deleteOrganizationUser(orgId: string, userId: string) {
     await apiClient.delete(`${API_CONFIG.ENDPOINTS.ORGANIZATIONS.DELETE}/${orgId}/users/${userId}`);
   },
+
+  // QPay Methods
+  // Get QPay settings
+  async getQPaySettings(orgId: string) {
+    const response = await apiClient.get(
+      `${API_CONFIG.ENDPOINTS.ORGANIZATIONS.GET}/${orgId}/qpay/settings`
+    );
+    return response.data;
+  },
+
+  // Set QPay settings
+  async setQPaySettings(orgId: string, data: { terminal_id: string }) {
+    const response = await apiClient.put(
+      `${API_CONFIG.ENDPOINTS.ORGANIZATIONS.UPDATE}/${orgId}/qpay/settings`,
+      data
+    );
+    return response.data;
+  },
+
+  // Get QPay merchant status
+  async getQPayMerchant(orgId: string) {
+    const response = await apiClient.get(
+      `${API_CONFIG.ENDPOINTS.ORGANIZATIONS.GET}/${orgId}/qpay/merchant`
+    );
+    return response.data;
+  },
+
+  // Register QPay merchant
+  async registerQPayMerchant(
+    orgId: string,
+    data: {
+      merchant_type: 'company' | 'person';
+      terminal_id?: string;
+      username?: string;
+      password?: string;
+      // Company merchant fields
+      owner_first_name?: string;
+      owner_last_name?: string;
+      register_number: string;
+      company_name?: string;
+      name?: string;
+      name_eng?: string;
+      mcc_code: string;
+      city: string;
+      district: string;
+      address: string;
+      phone: string;
+      email: string;
+      owner_register_no?: string;
+      // Person merchant fields
+      first_name?: string;
+      last_name?: string;
+      business_name?: string;
+      business_name_eng?: string;
+    }
+  ) {
+    const response = await apiClient.post(
+      `${API_CONFIG.ENDPOINTS.ORGANIZATIONS.GET}/${orgId}/qpay/register`,
+      data
+    );
+    return response.data;
+  },
+
+  // Delete QPay merchant
+  async deleteQPayMerchant(orgId: string) {
+    const response = await apiClient.delete(
+      `${API_CONFIG.ENDPOINTS.ORGANIZATIONS.DELETE}/${orgId}/qpay/merchant`
+    );
+    return response.data;
+  },
 };
