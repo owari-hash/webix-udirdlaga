@@ -1,7 +1,7 @@
 'use client';
 
 import * as Yup from 'yup';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -32,7 +32,6 @@ export default function QPayRegisterDialog({ open, onClose, orgId, onSuccess }: 
   const { enqueueSnackbar } = useSnackbar();
   const [merchantType, setMerchantType] = useState<'company' | 'person'>('company');
   const [loading, setLoading] = useState(false);
-  const [checkingStatus, setCheckingStatus] = useState(false);
   const [organization, setOrganization] = useState<Organization | null>(null);
 
   // Unified schema that validates based on merchant_type
@@ -79,31 +78,34 @@ export default function QPayRegisterDialog({ open, onClose, orgId, onSuccess }: 
     owner_register_no: Yup.string(),
   });
 
-  const defaultValues = {
-    merchant_type: 'company' as 'company' | 'person',
-    terminal_id: '',
-    username: '',
-    password: '',
-    // Company fields
-    owner_first_name: '',
-    owner_last_name: '',
-    register_number: '',
-    company_name: '',
-    name: '',
-    name_eng: '',
-    mcc_code: '',
-    city: '',
-    district: '',
-    address: '',
-    phone: '',
-    email: '',
-    owner_register_no: '',
-    // Person fields
-    first_name: '',
-    last_name: '',
-    business_name: '',
-    business_name_eng: '',
-  };
+  const defaultValues = useMemo(
+    () => ({
+      merchant_type: 'company' as 'company' | 'person',
+      terminal_id: '',
+      username: '',
+      password: '',
+      // Company fields
+      owner_first_name: '',
+      owner_last_name: '',
+      register_number: '',
+      company_name: '',
+      name: '',
+      name_eng: '',
+      mcc_code: '',
+      city: '',
+      district: '',
+      address: '',
+      phone: '',
+      email: '',
+      owner_register_no: '',
+      // Person fields
+      first_name: '',
+      last_name: '',
+      business_name: '',
+      business_name_eng: '',
+    }),
+    []
+  );
 
   const methods = useForm({
     resolver: yupResolver(QPaySchema),
@@ -115,66 +117,12 @@ export default function QPayRegisterDialog({ open, onClose, orgId, onSuccess }: 
     formState: { isSubmitting },
     reset,
     watch,
-    setValue,
   } = methods;
 
   const watchedMerchantType = watch('merchant_type') as 'company' | 'person';
 
-  // Sync merchantType state with form value when it changes
-  useEffect(() => {
-    if (watchedMerchantType && watchedMerchantType !== merchantType) {
-      setMerchantType(watchedMerchantType);
-      // When switching types, preserve common fields and organization data
-      const currentValues = watch();
-      const preservedValues = {
-        ...defaultValues,
-        merchant_type: watchedMerchantType,
-        // Preserve QPay credentials
-        terminal_id: currentValues.terminal_id || '',
-        username: currentValues.username || '',
-        password: currentValues.password || '',
-        // Preserve common organization data
-        register_number: currentValues.register_number || '',
-        email: currentValues.email || '',
-        phone: currentValues.phone || '',
-        address: currentValues.address || '',
-        city: currentValues.city || '',
-        district: currentValues.district || '',
-        mcc_code: currentValues.mcc_code || '',
-      };
-
-      // If organization data is available, use it for the new type
-      if (organization) {
-        if (watchedMerchantType === 'company') {
-          preservedValues.company_name = organization.name;
-          preservedValues.name = organization.displayName || organization.name;
-          preservedValues.name_eng = organization.name;
-          preservedValues.owner_register_no = organization.taxId || '';
-        } else {
-          const nameParts = organization.name?.split(' ') || [];
-          preservedValues.first_name = nameParts[0] || '';
-          preservedValues.last_name = nameParts.slice(1).join(' ') || '';
-          preservedValues.name = organization.displayName || organization.name;
-          preservedValues.name_eng = organization.name;
-          preservedValues.business_name = organization.name;
-          preservedValues.business_name_eng = organization.name;
-        }
-      }
-
-      reset(preservedValues);
-    }
-  }, [watchedMerchantType, organization]);
-
-  // Load organization data and check QPay merchant status on open
-  useEffect(() => {
-    if (open && orgId) {
-      loadOrganizationData();
-      checkMerchantStatus();
-    }
-  }, [open, orgId]);
-
   // Load organization data and pre-fill form
-  const loadOrganizationData = async () => {
+  const loadOrganizationData = useCallback(async () => {
     try {
       const orgData = await organizationApi.getOrganization(orgId);
       setOrganization(orgData);
@@ -230,11 +178,10 @@ export default function QPayRegisterDialog({ open, onClose, orgId, onSuccess }: 
       });
       setMerchantType('company');
     }
-  };
+  }, [orgId, reset, defaultValues]);
 
-  const checkMerchantStatus = async () => {
+  const checkMerchantStatus = useCallback(async () => {
     try {
-      setCheckingStatus(true);
       const response = await organizationApi.getQPayMerchant(orgId);
       if (response && typeof response === 'object' && 'data' in response) {
         const responseData = response as { data?: { registered?: boolean } };
@@ -246,10 +193,62 @@ export default function QPayRegisterDialog({ open, onClose, orgId, onSuccess }: 
       }
     } catch (error) {
       // Ignore errors, just check if already registered
-    } finally {
-      setCheckingStatus(false);
     }
-  };
+  }, [orgId, enqueueSnackbar]);
+
+  // Sync merchantType state with form value when it changes
+  useEffect(() => {
+    if (watchedMerchantType && watchedMerchantType !== merchantType) {
+      setMerchantType(watchedMerchantType);
+      // When switching types, preserve common fields and organization data
+      const currentValues = watch();
+      const preservedValues = {
+        ...defaultValues,
+        merchant_type: watchedMerchantType,
+        // Preserve QPay credentials
+        terminal_id: currentValues.terminal_id || '',
+        username: currentValues.username || '',
+        password: currentValues.password || '',
+        // Preserve common organization data
+        register_number: currentValues.register_number || '',
+        email: currentValues.email || '',
+        phone: currentValues.phone || '',
+        address: currentValues.address || '',
+        city: currentValues.city || '',
+        district: currentValues.district || '',
+        mcc_code: currentValues.mcc_code || '',
+      };
+
+      // If organization data is available, use it for the new type
+      if (organization) {
+        if (watchedMerchantType === 'company') {
+          preservedValues.company_name = organization.name;
+          preservedValues.name = organization.displayName || organization.name;
+          preservedValues.name_eng = organization.name;
+          preservedValues.owner_register_no = organization.taxId || '';
+        } else {
+          const nameParts = organization.name?.split(' ') || [];
+          preservedValues.first_name = nameParts[0] || '';
+          preservedValues.last_name = nameParts.slice(1).join(' ') || '';
+          preservedValues.name = organization.displayName || organization.name;
+          preservedValues.name_eng = organization.name;
+          preservedValues.business_name = organization.name;
+          preservedValues.business_name_eng = organization.name;
+        }
+      }
+
+      reset(preservedValues);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchedMerchantType, organization, merchantType, watch, reset]);
+
+  // Load organization data and check QPay merchant status on open
+  useEffect(() => {
+    if (open && orgId) {
+      loadOrganizationData();
+      checkMerchantStatus();
+    }
+  }, [open, orgId, loadOrganizationData, checkMerchantStatus]);
 
   const onSubmitForm = handleSubmit(async (data) => {
     try {
